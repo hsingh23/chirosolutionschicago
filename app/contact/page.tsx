@@ -1,40 +1,44 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { motion } from "motion/react"
-import { FaPhone, FaEnvelope, FaMapMarkerAlt } from "react-icons/fa"
+import { useState } from "react";
+import { motion } from "motion/react";
+import { FaPhone, FaEnvelope, FaMapMarkerAlt } from "react-icons/fa";
 
 export default function Contact() {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     message: "",
-  })
+  });
 
-  const handleChange = (e) => {
-    const { name, value } = e.target
-    setFormData((prevData) => ({
+  interface FormData {
+    name: string;
+    email: string;
+    message: string;
+  }
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void => {
+    const { name, value } = e.target;
+    setFormData((prevData: FormData) => ({
       ...prevData,
       [name]: value,
-    }))
-  }
+    }));
+  };
 
-  const handleSubmit = (e) => {
-    e.preventDefault()
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>): void => {
+    e.preventDefault();
     // Here you would typically send the form data to your backend or a service like Formspree
-    console.log("Form submitted:", formData)
+    console.log("Form submitted:", formData);
     // Reset form after submission
-    setFormData({ name: "", email: "", message: "" })
-    alert("Thank you for your message. We will get back to you soon!")
-  }
+    setFormData({ name: "", email: "", message: "" });
+    alert("Thank you for your message. We will get back to you soon!");
+  };
 
   return (
     <div className="min-h-screen py-12 pt-24 ">
       <div className="container mx-auto px-4">
         <h1 className="text-4xl font-bold mb-8 text-center">Contact Us</h1>
-        <p className="text-xl text-center mb-12 text-gray-600">
-          We're here to answer your questions and provide support
-        </p>
+        <p className="text-xl text-center mb-12 text-gray-600">We're here to answer your questions and provide support</p>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
           <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5 }}>
@@ -83,21 +87,14 @@ export default function Contact() {
                 ></textarea>
               </div>
               <div>
-                <button
-                  type="submit"
-                  className="w-full bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition duration-300"
-                >
+                <button type="submit" className="w-full bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition duration-300">
                   Send Message
                 </button>
               </div>
             </form>
           </motion.div>
 
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-          >
+          <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, delay: 0.2 }}>
             <h2 className="text-2xl font-semibold mb-6">Contact Information</h2>
             <div className="space-y-4">
               <div className="flex items-center">
@@ -131,7 +128,7 @@ export default function Contact() {
                   width="100%"
                   height="300"
                   style={{ border: 0 }}
-                  allowFullScreen=""
+                  allowFullScreen
                   loading="lazy"
                 ></iframe>
               </div>
@@ -140,6 +137,5 @@ export default function Contact() {
         </div>
       </div>
     </div>
-  )
+  );
 }
-

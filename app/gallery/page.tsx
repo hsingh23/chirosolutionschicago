@@ -1,38 +1,36 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
-import Image from 'next/image'
-import { motion } from 'motion/react'
+import { useState } from "react";
+import Image from "next/image";
+import { motion } from "motion/react";
 
 const beforeAfterImages = [
   {
-    before: '/before-after/face-before-1.jpg',
-    after: '/before-after/face-after-1.jpg',
-    treatment: 'Mei Zen Cosmetic Acupuncture',
+    before: "/before-after/face-before-1.jpg",
+    after: "/before-after/face-after-1.jpg",
+    treatment: "Mei Zen Cosmetic Acupuncture",
   },
   {
-    before: '/before-after/cupping-before-1.jpg',
-    after: '/before-after/cupping-after-1.jpg',
-    treatment: 'Cupping Therapy',
+    before: "/before-after/cupping-before-1.jpg",
+    after: "/before-after/cupping-after-1.jpg",
+    treatment: "Cupping Therapy",
   },
   {
-    before: '/before-after/red-light-before-1.jpg',
-    after: '/before-after/red-light-after-1.jpg',
-    treatment: 'Red Light Therapy',
+    before: "/before-after/red-light-before-1.jpg",
+    after: "/before-after/red-light-after-1.jpg",
+    treatment: "Red Light Therapy",
   },
   // Add more before and after images as needed
-]
+];
 
 export default function Gallery() {
-  const [selectedImage, setSelectedImage] = useState(null)
+  const [selectedImage, setSelectedImage] = useState<number | null>(null);
 
   return (
     <div className="min-h-screen py-12 pt-24 ">
       <div className="container mx-auto px-4">
         <h1 className="text-4xl font-bold mb-8 text-center">Before & After Gallery</h1>
-        <p className="text-xl text-center mb-12 text-gray-600">
-          See the remarkable results of our treatments
-        </p>
+        <p className="text-xl text-center mb-12 text-gray-600">See the remarkable results of our treatments</p>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {beforeAfterImages.map((image, index) => (
@@ -58,31 +56,22 @@ export default function Gallery() {
                   alt={`After ${image.treatment}`}
                   layout="fill"
                   objectFit="cover"
-                  className={`absolute inset-0 transition-opacity duration-300 ${
-                    selectedImage === index ? 'opacity-100' : 'opacity-0'
-                  }`}
+                  className={`absolute inset-0 transition-opacity duration-300 ${selectedImage === index ? "opacity-100" : "opacity-0"}`}
                 />
-                <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white p-2 text-center">
-                  {selectedImage === index ? 'After' : 'Before'}
-                </div>
+                <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white p-2 text-center">{selectedImage === index ? "After" : "Before"}</div>
               </div>
               <div className="p-4">
                 <h3 className="text-lg font-semibold mb-2">{image.treatment}</h3>
-                <p className="text-sm text-gray-600">
-                  Hover over the image to see the transformation
-                </p>
+                <p className="text-sm text-gray-600">Hover over the image to see the transformation</p>
               </div>
             </motion.div>
           ))}
         </div>
 
         <div className="mt-12 text-center">
-          <p className="text-gray-600 italic">
-            Results may vary depending on individual conditions. Consult with Dr. Dziekan for personalized treatment plans.
-          </p>
+          <p className="text-gray-600 italic">Results may vary depending on individual conditions. Consult with Dr. Dziekan for personalized treatment plans.</p>
         </div>
       </div>
     </div>
-  )
+  );
 }
-
