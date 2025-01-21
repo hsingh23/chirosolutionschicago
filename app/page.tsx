@@ -1,8 +1,8 @@
 "use client";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import Image from "next/image";
 import { motion, useScroll, useTransform } from "motion/react";
-import { FaChevronRight, FaStar, FaInstagram, FaFacebook } from "react-icons/fa";
+import { FaChevronRight, FaStar, FaInstagram, FaFacebook, FaChevronLeft } from "react-icons/fa";
 import Link from "next/link";
 
 const stats = [
@@ -92,23 +92,32 @@ export default function Home() {
   });
 
   const y = useTransform(scrollYProgress, [0, 1], ["0%", "10%"]);
-  const opacity = useTransform(scrollYProgress, [0, 1], [1, 0.5]);
+
+  const [currentTestimonial, setCurrentTestimonial] = useState(0);
+
+  const nextTestimonial = () => {
+    setCurrentTestimonial((prev) => (prev + 1) % testimonials.length);
+  };
+
+  const prevTestimonial = () => {
+    setCurrentTestimonial((prev) => (prev - 1 + testimonials.length) % testimonials.length);
+  };
 
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
       <section ref={targetRef} className="relative min-h-screen flex items-center justify-center bg-gradient-to-b from-purple-50 to-white overflow-hidden">
-        <motion.div style={{ y, opacity }} className="container mx-auto px-4 py-12 flex flex-col md:flex-row items-center justify-between">
+        <motion.div style={{ y }} className="container mx-auto px-4 py-12 flex flex-col md:flex-row items-center justify-between">
           <div className="md:w-1/2 text-left z-10 mb-8 md:mb-0">
-            <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="text-3xl md:text-5xl lg:text-6xl font-bold mb-6">
+            <motion.h1 initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ duration: 0.5 }} className="text-3xl md:text-5xl lg:text-6xl font-bold mb-6">
               Enhance Wellness with Tailored Treatments
             </motion.h1>
-            <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.2 }} className="text-lg md:text-xl mb-8 text-gray-600">
+            <motion.p initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ duration: 0.5, delay: 0.2 }} className="text-lg md:text-xl mb-8 text-gray-600">
               Experience comprehensive chiropractic and holistic wellness in the heart of Chicago
             </motion.p>
             <motion.a
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
               transition={{ duration: 0.5, delay: 0.4 }}
               href="https://www.schedulicity.com/scheduling/NCST6P"
               target="_blank"
@@ -118,7 +127,7 @@ export default function Home() {
               Schedule Now
             </motion.a>
           </div>
-          <motion.div className="md:w-1/2" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, delay: 0.3 }}>
+          <motion.div className="md:w-1/2" initial={{ x: 20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ duration: 0.5, delay: 0.3 }}>
             <Image src="/images/hero-image.jpg" alt="Chiropractic Treatment" width={600} height={600} className="rounded-lg w-full h-auto" />
           </motion.div>
         </motion.div>
@@ -174,28 +183,40 @@ export default function Home() {
       {/* Testimonials Section */}
       <section className="py-16 bg-gray-50">
         <div className="container mx-auto px-4">
-          <motion.h2 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="text-3xl font-bold text-center mb-12">
+          <motion.h2 initial={{ y: 20, opacity: 0 }} whileInView={{ y: 0, opacity: 1 }} transition={{ duration: 0.5 }} className="text-3xl font-bold text-center mb-12">
             What People Say About Us
           </motion.h2>
-          <div className="overflow-x-auto">
-            <div className="flex space-x-6 pb-4">
-              {testimonials.map((testimonial, index) => (
-                <motion.div
-                  key={testimonial.name}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: index * 0.1 }}
-                  className="bg-white p-6 rounded-lg shadow-md flex-shrink-0 w-80"
-                >
-                  <div className="flex mb-4">
-                    {[...Array(testimonial.rating)].map((_, i) => (
-                      <FaStar key={i} className="text-yellow-400" />
-                    ))}
+          <div className="relative">
+            <button
+              onClick={prevTestimonial}
+              className="absolute left-0 top-1/2 transform -translate-y-1/2 bg-white rounded-full p-2 shadow-md z-10"
+              aria-label="Previous testimonial"
+            >
+              <FaChevronLeft />
+            </button>
+            <button
+              onClick={nextTestimonial}
+              className="absolute right-0 top-1/2 transform -translate-y-1/2 bg-white rounded-full p-2 shadow-md z-10"
+              aria-label="Next testimonial"
+            >
+              <FaChevronRight />
+            </button>
+            <div className="overflow-hidden">
+              <motion.div className="flex transition-transform duration-300 ease-in-out" style={{ transform: `translateX(-${currentTestimonial * 100}%)` }}>
+                {testimonials.map((testimonial, index) => (
+                  <div key={index} className="w-full flex-shrink-0 px-4">
+                    <div className="bg-white p-6 rounded-lg shadow-md">
+                      <div className="flex mb-4">
+                        {[...Array(testimonial.rating)].map((_, i) => (
+                          <FaStar key={i} className="text-yellow-400" />
+                        ))}
+                      </div>
+                      <p className="text-gray-600 mb-4">"{testimonial.text}"</p>
+                      <p className="font-semibold">- {testimonial.name}</p>
+                    </div>
                   </div>
-                  <p className="text-gray-600 mb-4">"{testimonial.text}"</p>
-                  <p className="font-semibold">- {testimonial.name}</p>
-                </motion.div>
-              ))}
+                ))}
+              </motion.div>
             </div>
           </div>
         </div>
