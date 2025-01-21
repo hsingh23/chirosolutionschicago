@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { motion, AnimatePresence } from "motion/react";
+import { motion, AnimatePresence } from "framer-motion";
 import { FaBars, FaTimes, FaCalendar } from "react-icons/fa";
 
 const Header = () => {
@@ -11,20 +11,12 @@ const Header = () => {
 
   const toggleMenu = () => setIsOpen(!isOpen);
 
-  // useEffect(() => {
-  // const handleScroll = () => {
-  // setIsScrolled(window.scrollY > 20)
-  // }
-
-  // window.addEventListener('scroll', handleScroll)
-  // return () => window.removeEventListener('scroll', handleScroll)
-  // }, [])
-
   const menuItems = [
     { href: "/", label: "Home" },
     { href: "/about", label: "About" },
     { href: "/services", label: "Services" },
     { href: "/plans", label: "Plans" },
+    { href: "/blog", label: "Blog" },
     { href: "/contact", label: "Contact" },
   ];
 

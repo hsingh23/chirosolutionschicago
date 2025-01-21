@@ -1,8 +1,8 @@
-import Link from "next/link"
-import { FaInstagram, FaFacebook, FaTwitter, FaPhone, FaEnvelope, FaMapMarkerAlt, FaCalendar } from "react-icons/fa"
+import Link from "next/link";
+import { FaInstagram, FaFacebook, FaPhone, FaEnvelope, FaMapMarkerAlt, FaCalendar } from "react-icons/fa";
 
 const Footer = () => {
-  const currentYear = new Date().getFullYear()
+  const currentYear = new Date().getFullYear();
 
   return (
     <footer className="bg-gray-900 text-gray-300">
@@ -12,33 +12,14 @@ const Footer = () => {
           <div>
             <h3 className="text-xl font-bold text-white mb-4">Dr. Daniel M. Dziekan</h3>
             <p className="mb-4 text-sm leading-relaxed">
-              Certified Chiropractic Sports Physician & Mei Zen Cosmetic Acupuncture Practitioner, providing
-              comprehensive wellness solutions in Chicago.
+              Certified Chiropractic Sports Physician & Mei Zen Cosmetic Acupuncture Practitioner, providing comprehensive wellness solutions in Chicago.
             </p>
             <div className="flex space-x-4">
-              <a
-                href="https://instagram.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="hover:text-white transition-colors"
-              >
+              <a href="https://www.instagram.com/chirochicago/" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">
                 <FaInstagram size={20} />
               </a>
-              <a
-                href="https://facebook.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="hover:text-white transition-colors"
-              >
+              <a href="https://www.facebook.com/chirosolutionschicago/" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">
                 <FaFacebook size={20} />
-              </a>
-              <a
-                href="https://twitter.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="hover:text-white transition-colors"
-              >
-                <FaTwitter size={20} />
               </a>
             </div>
           </div>
@@ -48,27 +29,27 @@ const Footer = () => {
             <h4 className="text-lg font-semibold text-white mb-4">Our Services</h4>
             <ul className="space-y-2">
               <li>
-                <Link href="/services#chiropractic" className="hover:text-white transition-colors">
+                <Link href="/services?service=chiropractic" className="hover:text-white transition-colors">
                   Chiropractic Care
                 </Link>
               </li>
               <li>
-                <Link href="/services#acupuncture" className="hover:text-white transition-colors">
+                <Link href="/services?service=cosmetic-acupuncture" className="hover:text-white transition-colors">
                   Cosmetic Acupuncture
                 </Link>
               </li>
               <li>
-                <Link href="/services#cupping" className="hover:text-white transition-colors">
+                <Link href="/services?service=cupping" className="hover:text-white transition-colors">
                   Cupping Therapy
                 </Link>
               </li>
               <li>
-                <Link href="/services#infrared" className="hover:text-white transition-colors">
+                <Link href="/services?service=infrared-sauna" className="hover:text-white transition-colors">
                   Infrared Sauna
                 </Link>
               </li>
               <li>
-                <Link href="/services#tcm" className="hover:text-white transition-colors">
+                <Link href="/services?service=tcm" className="hover:text-white transition-colors">
                   Traditional Chinese Medicine
                 </Link>
               </li>
@@ -128,10 +109,7 @@ const Footer = () => {
               </li>
               <li className="flex items-start gap-3">
                 <FaEnvelope className="mt-1 flex-shrink-0" />
-                <a
-                  href="mailto:chirosolutionschicago@gmail.com"
-                  className="hover:text-white transition-colors break-all"
-                >
+                <a href="mailto:chirosolutionschicago@gmail.com" className="hover:text-white transition-colors break-all">
                   chirosolutionschicago@gmail.com
                 </a>
               </li>
@@ -155,8 +133,7 @@ const Footer = () => {
         </div>
       </div>
     </footer>
-  )
-}
+  );
+};
 
-export default Footer
-
+export default Footer;
