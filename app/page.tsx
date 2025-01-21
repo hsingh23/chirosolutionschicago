@@ -1,60 +1,74 @@
-"use client"
-
-import { useRef } from "react"
-import Image from "next/image"
-import { motion, useScroll, useTransform } from "motion/react"
-import { FaChevronRight, FaStar, FaInstagram, FaFacebook } from "react-icons/fa"
+"use client";
+import { useRef } from "react";
+import Image from "next/image";
+import { motion, useScroll, useTransform } from "motion/react";
+import { FaChevronRight, FaStar, FaInstagram, FaFacebook } from "react-icons/fa";
+import Link from "next/link";
 
 const stats = [
-  { value: "1800+", label: "Satisfied Clients" },
-  { value: "15+", label: "Years of Experience" },
-  { value: "90%", label: "Client Retention" },
+  { value: "2100+", label: "Satisfied Clients" },
+  { value: "16+", label: "Years of Experience" },
+  { value: "93%", label: "Client Retention" },
   { value: "4.9/5", label: "Average Review" },
-]
+];
 
 const coreServices = [
   {
-    title: "Chiropractic Adjustments",
+    title: "Sport Chiropractic",
     description:
-      "Tailored treatments to improve spinal alignment, relieve pain, and enhance mobility. Includes orthopedic exam, neurologic testing, and personalized treatment plans.",
-    icon: "🦴",
+      "Expert sports chiropractic care combining thorough evaluation with personalized treatment plans. We focus on optimizing spinal alignment, joint mobility, and muscle function to enhance athletic performance and accelerate recovery.",
+    image: "/images/sport-chiropractic.jpg",
   },
   {
     title: "Cosmetic Acupuncture",
     description:
-      "Facial rejuvenation, neck lifts, and chin/jawline definition using Mei Zen techniques. Addresses crow's feet, eyelid lift, and overall anti-aging effects.",
-    icon: "💆",
+      "Experience natural facial rejuvenation with Mei Zen cosmetic acupuncture. This gentle treatment enhances your features by stimulating collagen production, reducing fine lines, and creating natural lift around the eyes, neck, and jawline.",
+    image: "/images/cosmetic-acupuncture.jpg",
   },
   {
     title: "Electric Stimulation Acupuncture",
-    description: "Combines acupuncture with electric stimulation to enhance pain relief and healing.",
-    icon: "⚡",
+    description: "Combines acupuncture with electric stimulation to enhance pain relief and healing, promoting faster recovery and improved overall wellness.",
+    image: "/images/electric-acupuncture.jpg",
   },
-]
+];
 
 const testimonials = [
   {
     name: "Sarah M.",
-    text: `Dr. Dziekan's Mei Zen Cosmetic Acupuncture has completely transformed my skin. The results are amazing!`,
+    text: "Dr. Dziekan's Mei Zen Cosmetic Acupuncture has completely transformed my skin. The results are amazing! I look years younger and feel more confident than ever.",
     rating: 5,
   },
   {
     name: "Michael T.",
-    text: "As an athlete, I appreciate Dr. Dziekan's sports medicine expertise. His treatments have significantly improved my performance.",
+    text: "As an athlete, I appreciate Dr. Dziekan's sports medicine expertise. His treatments have significantly improved my performance and recovery time. I couldn't be happier with the results!",
     rating: 5,
   },
   {
     name: "Lisa K.",
-    text: "The combination of chiropractic care and red light therapy has done wonders for my joint pain.",
+    text: "The combination of chiropractic care and red light therapy has done wonders for my joint pain. I highly recommend Dr. Dziekan's holistic approach to anyone seeking comprehensive wellness solutions.",
     rating: 5,
   },
-]
+  {
+    name: "David W.",
+    text: "I was skeptical about cupping at first, but the results speak for themselves. My muscle tension has decreased dramatically, and I feel more flexible than ever. Dr. Dziekan's expertise is unmatched!",
+    rating: 5,
+  },
+  {
+    name: "Emily R.",
+    text: "The infrared sauna sessions have been a game-changer for my overall wellness. I feel detoxified and energized after each visit. It's become an essential part of my self-care routine.",
+    rating: 5,
+  },
+  {
+    name: "John D.",
+    text: "I've been struggling with chronic back pain for years. After just a few sessions with Dr. Dziekan, I'm feeling better than I have in a long time. His comprehensive approach to wellness is truly life-changing.",
+    rating: 5,
+  },
+];
 
 const specializedPrograms = [
   {
     title: "Sports Medicine & Rehabilitation",
-    description:
-      "Comprehensive care for athletes and active individuals, including injury prevention and performance optimization.",
+    description: "Comprehensive care for athletes and active individuals, including injury prevention and performance optimization.",
   },
   {
     title: "Cosmetic & Anti-Aging Solutions",
@@ -64,44 +78,32 @@ const specializedPrograms = [
     title: "Wellness Maintenance Plans",
     description: "Regular treatments to sustain long-term health and vitality with flexible subscription options.",
   },
-]
+  {
+    title: "One Stop Shop",
+    description: "One place to get multi-modal treatment via acupuncture, mobile cupping, chiropractic work, detox plans and more.",
+  },
+];
 
 export default function Home() {
-  const targetRef = useRef<HTMLDivElement>(null)
+  const targetRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
     target: targetRef,
     offset: ["start end", "end start"],
-  })
+  });
 
-  const y = useTransform(scrollYProgress, [0, 1], ["0%", "10%"])
-  const opacity = useTransform(scrollYProgress, [0, 1], [1, 0.5])
+  const y = useTransform(scrollYProgress, [0, 1], ["0%", "10%"]);
+  const opacity = useTransform(scrollYProgress, [0, 1], [1, 0.5]);
 
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <section
-        ref={targetRef}
-        className="relative min-h-screen flex items-center justify-center bg-gradient-to-b from-purple-50 to-white overflow-hidden"
-      >
-        <motion.div
-          style={{ y, opacity }}
-          className="container mx-auto px-4 py-12 flex flex-col md:flex-row items-center justify-between"
-        >
+      <section ref={targetRef} className="relative min-h-screen flex items-center justify-center bg-gradient-to-b from-purple-50 to-white overflow-hidden">
+        <motion.div style={{ y, opacity }} className="container mx-auto px-4 py-12 flex flex-col md:flex-row items-center justify-between">
           <div className="md:w-1/2 text-left z-10 mb-8 md:mb-0">
-            <motion.h1
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-              className="text-3xl md:text-5xl lg:text-6xl font-bold mb-6"
-            >
+            <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="text-3xl md:text-5xl lg:text-6xl font-bold mb-6">
               Enhance Wellness with Tailored Treatments
             </motion.h1>
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.2 }}
-              className="text-lg md:text-xl mb-8 text-gray-600"
-            >
+            <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.2 }} className="text-lg md:text-xl mb-8 text-gray-600">
               Experience comprehensive chiropractic and holistic wellness in the heart of Chicago
             </motion.p>
             <motion.a
@@ -116,25 +118,14 @@ export default function Home() {
               Schedule Now
             </motion.a>
           </div>
-          <motion.div
-            className="md:w-1/2"
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5, delay: 0.3 }}
-          >
-            <Image
-              src="https://images.unsplash.com/photo-1508387027939-27cccde53673?ixid=M3w1NzUyMzF8MHwxfHNlYXJjaHw5fHxDaGlyb3ByYWN0b3J8ZW58MHx8fHwxNzM2OTk3MjEyfDA&ixlib=rb-4.0.3?q=80&fit=crop&w=924&h=1644"
-              alt="Chiropractic Treatment"
-              width={600}
-              height={600}
-              className="rounded-lg w-full h-auto"
-            />
+          <motion.div className="md:w-1/2" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, delay: 0.3 }}>
+            <Image src="/images/hero-image.jpg" alt="Chiropractic Treatment" width={600} height={600} className="rounded-lg w-full h-auto" />
           </motion.div>
         </motion.div>
       </section>
 
       {/* Stats Section */}
-      <section className="py-12 bg-purple-50 pt-300">
+      <section className="py-12 bg-purple-50">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             {stats.map((stat, index) => (
@@ -156,12 +147,7 @@ export default function Home() {
       {/* Core Services Section */}
       <section className="py-16">
         <div className="container mx-auto px-4">
-          <motion.h2
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="text-3xl font-bold text-center mb-12"
-          >
+          <motion.h2 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="text-3xl font-bold text-center mb-12">
             What We Love to Do
           </motion.h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -173,15 +159,10 @@ export default function Home() {
                 transition={{ duration: 0.5, delay: index * 0.1 }}
                 className="bg-white p-6 rounded-lg shadow-lg"
               >
-                <div className="text-4xl mb-4">{service.icon}</div>
+                <Image src={service.image || "/placeholder.svg"} alt={service.title} width={400} height={300} className="w-full h-48 object-cover rounded-lg mb-4" />
                 <h3 className="text-xl font-semibold mb-2">{service.title}</h3>
                 <p className="text-gray-600 mb-4">{service.description}</p>
-                <a
-                  href="https://www.schedulicity.com/scheduling/NCST6P"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-blue-600 hover:text-blue-800 flex items-center"
-                >
+                <a href="https://www.schedulicity.com/scheduling/NCST6P" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 flex items-center">
                   Book Now <FaChevronRight className="ml-2" />
                 </a>
               </motion.div>
@@ -193,32 +174,29 @@ export default function Home() {
       {/* Testimonials Section */}
       <section className="py-16 bg-gray-50">
         <div className="container mx-auto px-4">
-          <motion.h2
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="text-3xl font-bold text-center mb-12"
-          >
+          <motion.h2 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="text-3xl font-bold text-center mb-12">
             What People Say About Us
           </motion.h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {testimonials.map((testimonial, index) => (
-              <motion.div
-                key={testimonial.name}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-                className="bg-white p-6 rounded-lg shadow-md"
-              >
-                <div className="flex mb-4">
-                  {[...Array(testimonial.rating)].map((_, i) => (
-                    <FaStar key={i} className="text-yellow-400" />
-                  ))}
-                </div>
-                <p className="text-gray-600 mb-4">"{testimonial.text}"</p>
-                <p className="font-semibold">- {testimonial.name}</p>
-              </motion.div>
-            ))}
+          <div className="overflow-x-auto">
+            <div className="flex space-x-6 pb-4">
+              {testimonials.map((testimonial, index) => (
+                <motion.div
+                  key={testimonial.name}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: index * 0.1 }}
+                  className="bg-white p-6 rounded-lg shadow-md flex-shrink-0 w-80"
+                >
+                  <div className="flex mb-4">
+                    {[...Array(testimonial.rating)].map((_, i) => (
+                      <FaStar key={i} className="text-yellow-400" />
+                    ))}
+                  </div>
+                  <p className="text-gray-600 mb-4">"{testimonial.text}"</p>
+                  <p className="font-semibold">- {testimonial.name}</p>
+                </motion.div>
+              ))}
+            </div>
           </div>
         </div>
       </section>
@@ -228,41 +206,38 @@ export default function Home() {
         <div className="container mx-auto px-4">
           <div className="grid gap-10 md:grid-cols-2 items-center">
             <div>
-              <motion.h2
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
-                className="text-3xl font-bold mb-8"
-              >
+              <motion.h2 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="text-3xl font-bold mb-8">
                 Why Choose Us?
               </motion.h2>
               <div className="space-y-6">
                 {specializedPrograms.map((program, index) => (
-                  <motion.div
-                    key={program.title}
-                    initial={{ opacity: 0, x: -20 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.5, delay: index * 0.1 }}
-                  >
+                  <motion.div key={program.title} initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, delay: index * 0.1 }}>
                     <h3 className="text-xl font-semibold mb-2">{program.title}</h3>
                     <p className="text-gray-600">{program.description}</p>
                   </motion.div>
                 ))}
               </div>
             </div>
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.5 }}
-              className="relative h-[400px] rounded-lg overflow-hidden"
-            >
-              <Image
-                src="https://apm.info/images/bottom_chiropractic-medicine.jpg"
-                alt="Specialized Programs"
-                fill
-                className="object-cover"
-              />
+            <motion.div initial={{ opacity: 0, x: 20 }} whileInView={{ opacity: 1, x: 0 }} transition={{ duration: 0.5 }} className="relative h-[400px] rounded-lg overflow-hidden">
+              <Image src="/images/specialized-programs.jpg" alt="Specialized Programs" fill className="object-cover" />
             </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* Hours Section */}
+      <section className="py-16 bg-gray-100">
+        <div className="container mx-auto px-4">
+          <motion.h2 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="text-3xl font-bold text-center mb-8">
+            Office Hours
+          </motion.h2>
+          <div className="max-w-2xl mx-auto">
+            <ul className="space-y-2 text-center">
+              <li>Monday, Wednesday, Friday: 1:00 PM - 7:00 PM</li>
+              <li>Tuesday, Thursday: 7:30 AM - 12:30 PM</li>
+              <li>Saturday: 8:00 AM - 1:00 PM</li>
+              <li>Sunday: Closed</li>
+            </ul>
           </div>
         </div>
       </section>
@@ -272,12 +247,7 @@ export default function Home() {
         <div className="container mx-auto px-4">
           <div className="grid md:grid-cols-2 gap-8 items-center">
             <div>
-              <motion.h2
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
-                className="text-3xl font-bold mb-6"
-              >
+              <motion.h2 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="text-3xl font-bold mb-6">
                 Get in Touch
               </motion.h2>
               <div className="space-y-4">
@@ -285,20 +255,10 @@ export default function Home() {
                 <p>Phone: (773) 529-6530</p>
                 <p>Email: chirosolutionschicago@gmail.com</p>
                 <div className="flex space-x-4 mt-6">
-                  <a
-                    href="https://instagram.com"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="hover:text-blue-200"
-                  >
+                  <a href="https://www.instagram.com/chirochicago/" target="_blank" rel="noopener noreferrer" className="hover:text-blue-200">
                     <FaInstagram size={24} />
                   </a>
-                  <a
-                    href="https://facebook.com"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="hover:text-blue-200"
-                  >
+                  <a href="https://www.facebook.com/chirosolutionschicago/" target="_blank" rel="noopener noreferrer" className="hover:text-blue-200">
                     <FaFacebook size={24} />
                   </a>
                 </div>
@@ -319,6 +279,5 @@ export default function Home() {
         </div>
       </section>
     </div>
-  )
+  );
 }
-
