@@ -14,7 +14,7 @@ const stats = [
 
 const coreServices = [
   {
-    title: "Sport Chiropractic",
+    title: "Sports Chiropractic",
     description:
       "Expert sports chiropractic care combining thorough evaluation with personalized treatment plans. We focus on optimizing spinal alignment, joint mobility, and muscle function to enhance athletic performance and accelerate recovery.",
     image: "/images/sport-chiropractic.jpg",
