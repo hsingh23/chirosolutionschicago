@@ -20,7 +20,7 @@ const services = [
       "Better posture",
       "Increased overall well-being",
     ],
-    image: "/images/chiropractic.jpg",
+    image: "/images/chiropractic-close-up-of-hands-pinching-skin-on-lower-back-therapist-grabbing-skin-next-to-back-spinevista-313927104.jpeg",
   },
   {
     id: "cosmetic-acupuncture",
@@ -35,7 +35,7 @@ const services = [
       "Enhanced facial muscle tone",
       "Natural, long-lasting results without surgery",
     ],
-    image: "/images/cosmetic-acupuncture.jpg",
+    image: "/images/acupuncture--person-holding-woman-nose.jpeg",
   },
   {
     id: "infrared-sauna",
@@ -44,7 +44,7 @@ const services = [
     longDescription:
       "Our infrared sauna uses advanced technology to penetrate deep into your body, promoting detoxification, relaxation, and overall wellness. Unlike traditional saunas, infrared saunas operate at lower temperatures while providing more therapeutic benefits. The infrared heat helps to eliminate toxins, reduce muscle tension, and improve cardiovascular health.",
     benefits: ["Deep detoxification", "Improved circulation", "Muscle relaxation and pain relief", "Stress reduction", "Skin purification and rejuvenation"],
-    image: "/images/infrared-sauna.jpg",
+    image: "/images/sauna-woman-in-white-tank-top-sitting-on-brown-wooden-benchunsplash-h3yj24cjdos.jpeg",
   },
   {
     id: "red-light-therapy",
@@ -53,7 +53,7 @@ const services = [
     longDescription:
       "Red Light Therapy, also known as Low-Level Light Therapy (LLLT), uses specific wavelengths of red and near-infrared light to stimulate cellular function. This non-invasive treatment can accelerate healing, reduce inflammation, and promote collagen production. It's effective for skin rejuvenation, wound healing, and pain management.",
     benefits: ["Increased collagen production", "Faster wound healing", "Reduced inflammation and pain", "Improved skin tone and texture", "Enhanced muscle recovery"],
-    image: "/images/red-light-therapy.jpg",
+    image: "/images/red light therapy-cosmetologist-performs-led-light-therapy-for-facial-rejuvenationvista-745586508.jpeg",
   },
   {
     id: "cupping",
@@ -68,7 +68,7 @@ const services = [
       "Reduced inflammation",
       "Promotion of relaxation and well-being",
     ],
-    image: "/images/cupping.jpg",
+    image: "/images/fire cupping-hijama-therapy-with-heated-vacuum-cups-on-patient-skin-to-heal-pain-problemsvista-667848836.jpeg",
   },
   {
     id: "tcm",
@@ -83,7 +83,7 @@ const services = [
       "Stress reduction and emotional balance",
       "Enhanced immune function",
     ],
-    image: "/images/tcm.jpg",
+    image: "/images/traditional chinese medicine-chinese-herbs-and-acupuncture-needlesvista-144445351.jpeg",
   },
   {
     id: "detox-nutrition",
@@ -98,7 +98,7 @@ const services = [
       "Weight management support",
       "Customized nutrition plans for optimal health",
     ],
-    image: "/images/detox-nutrition.jpg",
+    image: "/images/detox program-tablet-computer-diet-plan-and-set-of-healthy-food-with-kitchen-scalevista-415389100.jpeg",
   },
   {
     id: "rehab-physiotherapy",
@@ -113,7 +113,7 @@ const services = [
       "Enhanced physical performance",
       "Prevention of future injuries",
     ],
-    image: "/images/rehab-physiotherapy.jpg",
+    image: "/images/acupunture-woman-on-a-physiotherapy-table-during-a-massagevista-160109832.jpeg",
   },
 ];
 
@@ -188,7 +188,7 @@ export default function Services() {
               transition={{ duration: 0.5 }}
               className="bg-white rounded-lg shadow-md overflow-hidden"
             >
-              <Image src={activeService.image || "/placeholder.svg"} alt={activeService.name} width={800} height={400} className="w-full h-64 object-cover" />
+              <Image src={activeService.image || "/placeholder.svg"} alt={activeService.name} width={1000} height={800} objectFit="cover" />
               <div className="p-6">
                 <h2 className="text-2xl font-semibold mb-4" id={activeService.id}>
                   {activeService.name}
