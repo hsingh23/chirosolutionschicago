@@ -17,18 +17,18 @@ const coreServices = [
     title: "Sports Chiropractic",
     description:
       "Expert sports chiropractic care combining thorough evaluation with personalized treatment plans. We focus on optimizing spinal alignment, joint mobility, and muscle function to enhance athletic performance and accelerate recovery.",
-    image: "/images/sport-chiropractic.jpg",
+    image: "/images/chiropractic adjustment-a-woman-getting-a-back-massage-from-a-manunsplash-d7gtkuo9q6s.jpeg",
   },
   {
     title: "Cosmetic Acupuncture",
     description:
       "Experience natural facial rejuvenation with Mei Zen cosmetic acupuncture. This gentle treatment enhances your features by stimulating collagen production, reducing fine lines, and creating natural lift around the eyes, neck, and jawline.",
-    image: "/images/cosmetic-acupuncture.jpg",
+    image: "/images/acupuncture--person-holding-woman-nose.jpeg",
   },
   {
     title: "Electric Stimulation Acupuncture",
     description: "Combines acupuncture with electric stimulation to enhance pain relief and healing, promoting faster recovery and improved overall wellness.",
-    image: "/images/electric-acupuncture.jpg",
+    image: "/images/electric acupuncture-asian-woman-receiving-acupuncture-with-electrical-stimulator-at-back-alternative-medicine-conceptvista-382856158.jpeg",
   },
 ];
 
@@ -128,7 +128,22 @@ export default function Home() {
             </motion.a>
           </div>
           <motion.div className="md:w-1/2" initial={{ x: 20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ duration: 0.5, delay: 0.3 }}>
-            <Image src="/images/hero-image.jpg" alt="Chiropractic Treatment" width={600} height={600} className="rounded-lg w-full h-auto" />
+            <video
+              src="https://i.imgur.com/H0GVq4r.mp4"
+              className="rounded-lg w-full h-auto"
+              autoPlay
+              muted
+              loop
+              playsInline
+              onClick={(e) => {
+                const video = e.target as HTMLVideoElement;
+                if (video.muted) {
+                  video.muted = false;
+                } else {
+                  video.muted = true;
+                }
+              }}
+            />
           </motion.div>
         </motion.div>
       </section>
@@ -168,7 +183,14 @@ export default function Home() {
                 transition={{ duration: 0.5, delay: index * 0.1 }}
                 className="bg-white p-6 rounded-lg shadow-lg"
               >
-                <Image src={service.image || "/placeholder.svg"} alt={service.title} width={400} height={300} className="w-full h-48 object-cover rounded-lg mb-4" />
+                <Image
+                  loading="eager"
+                  src={service.image || "/placeholder.svg"}
+                  alt={service.title}
+                  width={400}
+                  height={300}
+                  className="w-full h-48 object-cover rounded-lg mb-4"
+                />
                 <h3 className="text-xl font-semibold mb-2">{service.title}</h3>
                 <p className="text-gray-600 mb-4">{service.description}</p>
                 <a href="https://www.schedulicity.com/scheduling/NCST6P" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 flex items-center">
@@ -240,7 +262,7 @@ export default function Home() {
               </div>
             </div>
             <motion.div initial={{ opacity: 0, x: 20 }} whileInView={{ opacity: 1, x: 0 }} transition={{ duration: 0.5 }} className="relative h-[400px] rounded-lg overflow-hidden">
-              <Image src="/images/specialized-programs.jpg" alt="Specialized Programs" fill className="object-cover" />
+              <Image loading="eager" src="/images/collage.jpg" alt="Specialized Programs" fill objectFit="cover" objectPosition="top" />
             </motion.div>
           </div>
         </div>
