@@ -1,9 +1,12 @@
 ---
 title: "See What New Year's Specials Work For You…"
-date: "December 28, 2024"
+date: "2024-12-28"
+author: "Dr. Daniel M. Dziekan"
+excerpt: "Discover our exciting New Year's specials designed to kickstart your wellness journey. From package deals to free sessions, find the perfect offer to meet your health goals."
+tags: ["promotions", "wellness", "new year"]
+category: "Offers"
+image: "/images/blog/new year-happy-new-year-hanged-decorunsplash-y1jsgq6hp58.jpeg"
 ---
-
-# Exciting New Year's Specials to Kickstart Your Wellness Journey
 
 As we welcome the New Year, it's the perfect time to invest in your health and well-being. At Dr. Daniel M. Dziekan's clinic, we're offering some incredible specials to help you start your year off right:
 
@@ -30,4 +33,3 @@ Purchase a 3 pack of Acupuncture treatments at $315 and receive:
 - A bottle of Stress Relief Chinese Herbs FREE (value $45)
 
 Don't miss out on these amazing offers to jumpstart your health and wellness goals for the New Year. Contact us today to learn more or to book your appointments!
-

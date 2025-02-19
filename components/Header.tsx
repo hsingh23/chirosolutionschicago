@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence } from "motion/react";
 import { FaBars, FaTimes, FaCalendar } from "react-icons/fa";
 
 const Header = () => {
@@ -84,4 +84,3 @@ const Header = () => {
 };
 
 export default Header;
-
