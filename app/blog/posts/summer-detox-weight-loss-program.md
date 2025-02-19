@@ -1,9 +1,12 @@
 ---
 title: "Summer is Coming: Get Ready with Our Detox/Weight Loss Program!"
-date: "May 1, 2025"
+date: "2025-05-01"
+author: "Dr. Daniel M. Dziekan"
+excerpt: "Prepare for summer with our comprehensive Detox/Weight Loss Program. Learn how Dr. Dziekan's expertise can help you achieve your health and fitness goals."
+tags: ["detox", "weight loss", "summer", "wellness"]
+category: "Wellness Programs"
+image: "/images/blog/detox-green-disposable-lighter-beside-orange-fruit-on-brown-woven-basketunsplash-oc7zzppm1dm.jpeg"
 ---
-
-# Prepare for Summer with Our Comprehensive Detox/Weight Loss Program
 
 Hello Natural Chiropractic Solutions Patients & Friends!
 
@@ -30,4 +33,3 @@ Dr. Dan Dziekan has been working on a program like this for a while, and here it
 - Proven results, as demonstrated by Dr. Dziekan's personal success
 
 Don't wait to start your journey to a healthier, more confident you. Contact us today to learn more about our Detox/Weight Loss Program and how it can help you achieve your summer body goals!
-

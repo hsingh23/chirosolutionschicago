@@ -27,7 +27,7 @@ const Header = () => {
       <nav className="container mx-auto px-6 py-4">
         <div className="flex justify-between items-center">
           <Link href="/" className={`text-xl font-bold transition-colors ${isScrolled ? "text-gray-900" : "text-gray-900"}`}>
-            Dr. Daniel M. Dziekan
+            Chiro Solutions chicago
           </Link>
           <div className="hidden md:flex items-center space-x-8">
             {menuItems.map((item) => (
