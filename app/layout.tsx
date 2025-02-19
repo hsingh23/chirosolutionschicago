@@ -12,7 +12,7 @@ export const metadata: Metadata = {
   description:
     "Experience personalized care for your health, beauty, and vitality with Dr. Daniel M. Dziekan, a Certified Chiropractic Sports Physician & Mei Zen Cosmetic Acupuncture Practitioner in Chicago.",
   manifest: '/manifest.json',
-  themeColor: '#ffffff',
+  themeColor: '#bccd30',
   appleWebApp: {
     capable: true,
     statusBarStyle: 'default',
