@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { motion } from "motion/react";
+import { FaRss } from "react-icons/fa";
 import blogPosts from "../../public/blog-posts.json";
 
 interface BlogPost {
@@ -33,7 +34,7 @@ function BlogPostCard({ post, index, onTagClick }: {
       className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300"
     >
       <Link href={`/blog/${post.slug}`}>
-        <div className="relative w-full h-[400px]">
+        <div className="relative w-full h-48">
           <Image 
             src={post.image || "/placeholder.svg"} 
             alt={post.title} 
@@ -154,13 +155,20 @@ export default function Blog() {
   return (
     <div className="min-h-screen py-12 pt-24">
       <div className="container mx-auto px-4">
-        <h1 className="text-4xl font-bold mb-8 text-center">Our Blog</h1>
-        <p className="text-xl text-center mb-12 text-gray-600">
-          Stay informed with the latest in chiropractic care and holistic wellness
-        </p>
-
-        <div className="text-center mb-8">
-          <Link href="/rss.xml" className="text-blue-600 hover:text-blue-800">
+        <div className="flex flex-col md:flex-row items-center justify-between mb-12">
+          <div className="text-center md:text-left mb-4 md:mb-0">
+            <h1 className="text-4xl font-bold mb-2">Our Blog</h1>
+            <p className="text-xl text-gray-600">
+              Stay informed with the latest in chiropractic care and holistic wellness
+            </p>
+          </div>
+          <Link 
+            href="/rss.xml" 
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-sm font-medium text-blue-600 hover:text-blue-800 flex items-center gap-2 px-3 py-1 rounded-full hover:bg-slate-100/80 transition-colors"
+          >
+            <FaRss size={14} />
             Subscribe to RSS Feed
           </Link>
         </div>
@@ -170,7 +178,7 @@ export default function Blog() {
             <input 
               type="text" 
               placeholder="Search blog posts..." 
-              className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" 
+              className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-slate-50/80" 
               value={searchTerm} 
               onChange={(e) => handleSearch(e.target.value)} 
             />
@@ -185,7 +193,7 @@ export default function Blog() {
           </div>
           
           <div className="overflow-x-auto -mx-4 px-4 pb-2 mb-2">
-            <div className="flex flex-nowrap gap-2 min-w-full">
+            <div className="flex flex-nowrap min-w-full gap-2">
               <button 
                 className={`shrink-0 px-3 py-1 rounded-full text-sm transition-all duration-200 ${
                   selectedTag === "" ? "bg-blue-500 text-white" : "bg-slate-50/80 hover:bg-slate-100/80"
@@ -209,7 +217,7 @@ export default function Blog() {
           </div>
           
           <div className="overflow-x-auto -mx-4 px-4 pb-2">
-            <div className="flex flex-nowrap gap-2 min-w-full">
+            <div className="flex flex-nowrap min-w-full gap-2">
               <button
                 className={`shrink-0 px-3 py-1 rounded-full text-sm transition-all duration-200 ${
                   selectedCategory === "" ? "bg-blue-500 text-white" : "bg-slate-50/80 hover:bg-slate-100/80"
