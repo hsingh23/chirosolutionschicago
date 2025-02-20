@@ -6,6 +6,13 @@ import { Feed } from "feed"
 const BLOG_DIR = path.join(process.cwd(), "app", "blog", "posts")
 const OUTPUT_DIR = path.join(process.cwd(), "public")
 
+const calculateReadingTime = (content) => {
+  const wordsPerMinute = 200;
+  const words = content.trim().split(/\s+/).length;
+  const readingTime = Math.ceil(words / wordsPerMinute);
+  return readingTime;
+}
+
 async function processBlogPosts() {
   try {
     const files = await fs.readdir(BLOG_DIR)
@@ -17,10 +24,31 @@ async function processBlogPosts() {
         const content = await fs.readFile(filePath, "utf-8")
         const { data, content: markdownContent } = matter(content)
 
+        // Extract first paragraph for excerpt if not provided
+        let excerpt = data.excerpt
+        if (!excerpt) {
+          excerpt = markdownContent
+            .split('\n')
+            .find(p => p.trim().length > 0)
+            ?.replace(/[#*`]/g, '')
+            .trim()
+            .substring(0, 160)
+        }
+
+        // Calculate reading time
+        const readingTime = calculateReadingTime(markdownContent);
+
         posts.push({
           ...data,
           slug: file.replace(/\.mdx?$/, ""),
           content: markdownContent,
+          excerpt,
+          author: data.author || "Dr. Daniel M. Dziekan",
+          tags: data.tags || [],
+          category: data.category || "Wellness",
+          date: data.date || new Date().toISOString().split('T')[0],
+          readingTime,
+          wordCount: markdownContent.trim().split(/\s+/).length,
         })
       }
     }
@@ -54,12 +82,14 @@ async function processBlogPosts() {
         content: post.content,
         author: [
           {
-            name: post.author || "Dr. Daniel M. Dziekan",
+            name: post.author,
             email: "chirosolutionschicago@gmail.com",
             link: "https://www.chirosolutionschicago.com/about",
           },
         ],
         date: new Date(post.date),
+        category: post.category ? [{ name: post.category }] : undefined,
+        extensions: post.tags ? [{ name: 'tags', objects: post.tags }] : undefined,
       })
     })
 
