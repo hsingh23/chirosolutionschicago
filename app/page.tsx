@@ -262,7 +262,13 @@ export default function Home() {
               </div>
             </div>
             <motion.div initial={{ opacity: 0, x: 20 }} whileInView={{ opacity: 1, x: 0 }} transition={{ duration: 0.5 }} className="relative h-[400px] rounded-lg overflow-hidden">
-              <Image loading="eager" src="/images/collage.jpg" alt="Specialized Programs" fill objectFit="cover" objectPosition="top" />
+              <Image 
+                loading="eager" 
+                src="/images/collage.jpg" 
+                alt="Specialized Programs" 
+                fill 
+                className="object-cover object-top"
+              />
             </motion.div>
           </div>
         </div>

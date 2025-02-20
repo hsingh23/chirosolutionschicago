@@ -36,7 +36,7 @@ async function processBlogPosts() {
       link: "https://www.chirosolutionschicago.com/blog",
       language: "en",
       image: "https://www.chirosolutionschicago.com/logo.png",
-      favicon: "https://www.chirosolutionschicago.com/favicon.ico",
+      favicon: "https://www.chirosolutionschicago.com/images/icons/icon-192.png",
       copyright: `All rights reserved ${new Date().getFullYear()}, Dr. Daniel M. Dziekan`,
       author: {
         name: "Dr. Daniel M. Dziekan",

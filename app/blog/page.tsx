@@ -80,7 +80,16 @@ export default function Blog() {
               className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300"
             >
               <Link href={`/blog/${post.slug}`}>
-                <Image src={post.image || "/placeholder.svg"} alt={post.title} width={600} height={400} className="w-full h-48 object-cover" />
+                <div className="relative w-full h-[400px]">
+                  <Image 
+                    src={post.image || "/placeholder.svg"} 
+                    alt={post.title} 
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    priority={index < 3}
+                  />
+                </div>
                 <div className="p-6">
                   <h2 className="text-2xl font-semibold mb-2 hover:text-blue-600 transition-colors">{post.title}</h2>
                   <p className="text-gray-600 mb-4">{post.excerpt}</p>
