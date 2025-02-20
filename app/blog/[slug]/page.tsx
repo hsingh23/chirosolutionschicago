@@ -22,7 +22,6 @@ export async function generateMetadata({ params }: { params: { slug: string } })
       title: "Post Not Found",
     };
   }
-
   return {
     title: `${post.title} - Dr. Daniel M. Dziekan's Blog`,
     description: post.content.substring(0, 160),
@@ -30,16 +29,31 @@ export async function generateMetadata({ params }: { params: { slug: string } })
       title: post.title,
       description: post.content.substring(0, 160),
       url: `https://www.chirosolutionschicago.com/blog/${params.slug}`,
-      siteName: "Dr. Daniel M. Dziekan",
+      siteName: "Dr. Daniel M. Dziekan - ChiroSolutions Chicago",
       images: [
         {
-          url: `https://www.chirosolutionschicago.com/images/blog-${params.slug}.jpg`,
+          url: post.image || `https://www.chirosolutionschicago.com/images/blog/${params.slug}.jpg`,
           width: 1200,
           height: 630,
+          alt: post.title,
         },
       ],
       locale: "en_US",
       type: "article",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: post.title,
+      description: post.content.substring(0, 160),
+      images: [post.image || `https://www.chirosolutionschicago.com/images/blog/${params.slug}.jpg`],
+    },
+    icons: {
+      icon: "/images/icons/icon-192.png",
+      shortcut: "/images/icons/icon-192.png",
+      apple: "/images/icons/icon-192.png",
+    },
+    alternates: {
+      canonical: `https://www.chirosolutionschicago.com/blog/${params.slug}`,
     },
   };
 }
@@ -80,13 +94,14 @@ export default async function BlogPost({ params }: { params: { slug: string } })
             <h1 className="text-4xl font-bold mb-4">{post.title}</h1>
             <p className="text-gray-600 mb-8">Published on {post.date}</p>
             {post.image && (
-              <div className="relative w-full h-[400px] mb-8 rounded-lg overflow-hidden">
+              <div className="relative w-full h-[600px] mb-8 rounded-lg overflow-hidden">
                 <Image
                   src={post.image}
                   alt={post.title}
                   fill
                   className="object-cover"
                   priority
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 75vw, 1200px"
                 />
               </div>
             )}
