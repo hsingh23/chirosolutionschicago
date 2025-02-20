@@ -10,6 +10,12 @@ export const metadata: Metadata = {
     siteName: "Dr. Daniel M. Dziekan - ChiroSolutions Chicago",
     locale: "en_US",
     type: "website",
+    images: [{
+      url: '/images/collage.jpg',
+      width: 1200,
+      height: 630,
+      alt: 'Dr. Daniel M. Dziekan - Natural Chiropractic Solutions Blog'
+    }]
   },
   twitter: {
     card: "summary_large_image",
@@ -17,6 +23,12 @@ export const metadata: Metadata = {
     description: "Expert insights on chiropractic care, holistic wellness, and natural health solutions from Dr. Daniel M. Dziekan in Chicago.",
     creator: "@chirochicago",
     site: "@chirochicago",
+    images: [{
+      url: '/images/collage.jpg',
+      width: 1200,
+      height: 630,
+      alt: 'Dr. Daniel M. Dziekan - Natural Chiropractic Solutions Blog'
+    }]
   },
   icons: {
     icon: "/favicon.png",
