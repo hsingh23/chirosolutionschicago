@@ -113,7 +113,7 @@ export default function Home() {
               Enhance Wellness with Tailored Treatments
             </motion.h1>
             <motion.p initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ duration: 0.5, delay: 0.2 }} className="text-lg md:text-xl mb-8 text-gray-600">
-              Experience comprehensive chiropractic and holistic wellness in the heart of Chicago
+              Experience comprehensive chiropractic and holistic wellness in the heart of Chicago with Dr. Daniel M. Dziekan
             </motion.p>
             <motion.a
               initial={{ y: 20, opacity: 0 }}
