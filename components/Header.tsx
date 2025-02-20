@@ -15,7 +15,7 @@ const Header = () => {
     { href: "/", label: "Home" },
     { href: "/about", label: "About" },
     { href: "/services", label: "Services" },
-    { href: "/plans", label: "Plans" },
+    { href: "/plans", label: "Plans", hidden: true },
     { href: "/blog", label: "Blog" },
     { href: "/contact", label: "Contact" },
   ];
@@ -30,7 +30,7 @@ const Header = () => {
           Natural Chiropractic Solutions
           </Link>
           <div className="hidden md:flex items-center space-x-8">
-            {menuItems.map((item) => (
+            {menuItems.filter(item => !item.hidden).map((item) => (
               <Link key={item.href} href={item.href} className={`transition-colors ${isScrolled ? "text-gray-800 hover:text-blue-600" : "text-white hover:text-blue-200"}`}>
                 {item.label}
               </Link>
@@ -61,7 +61,7 @@ const Header = () => {
               transition={{ duration: 0.2 }}
               className="md:hidden mt-4 bg-white rounded-lg shadow-lg"
             >
-              {menuItems.map((item) => (
+              {menuItems.filter(item => !item.hidden).map((item) => (
                 <Link key={item.href} href={item.href} className="block py-3 px-4 text-gray-800 hover:bg-gray-100 rounded-lg" onClick={toggleMenu}>
                   {item.label}
                 </Link>

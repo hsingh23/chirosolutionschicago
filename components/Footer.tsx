@@ -29,13 +29,28 @@ const Footer = () => {
             <h4 className="text-lg font-semibold text-white mb-4">Our Services</h4>
             <ul className="space-y-2">
               <li>
-                <Link href="/services?service=chiropractic" className="hover:text-white transition-colors">
-                  Chiropractic Care
+                <Link href="/services?service=chiropractic-adjustments" className="hover:text-white transition-colors">
+                  Chiropractic Adjustments
                 </Link>
               </li>
               <li>
                 <Link href="/services?service=cosmetic-acupuncture" className="hover:text-white transition-colors">
-                  Cosmetic Acupuncture
+                  Cosmetic Acupuncture (Mei Zen)
+                </Link>
+              </li>
+              <li>
+                <Link href="/services?service=electric-stimulation-acupuncture" className="hover:text-white transition-colors">
+                  Electric Stimulation Acupuncture
+                </Link>
+              </li>
+              <li>
+                <Link href="/services?service=rehab-physiotherapy" className="hover:text-white transition-colors">
+                  Rehab & Physiotherapy
+                </Link>
+              </li>
+              <li>
+                <Link href="/services?service=red-light-therapy" className="hover:text-white transition-colors">
+                  Red Light Therapy
                 </Link>
               </li>
               <li>
@@ -49,8 +64,18 @@ const Footer = () => {
                 </Link>
               </li>
               <li>
+                <Link href="/services?service=therapeutic-exercises" className="hover:text-white transition-colors">
+                  Therapeutic Exercises
+                </Link>
+              </li>
+              <li>
                 <Link href="/services?service=tcm" className="hover:text-white transition-colors">
                   Traditional Chinese Medicine
+                </Link>
+              </li>
+              <li>
+                <Link href="/services?service=nutrition-detox" className="hover:text-white transition-colors">
+                  Nutrition & Detox Programs
                 </Link>
               </li>
             </ul>

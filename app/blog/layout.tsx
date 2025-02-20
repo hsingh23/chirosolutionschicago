@@ -19,12 +19,15 @@ export const metadata: Metadata = {
     site: "@chirochicago",
   },
   icons: {
-    icon: "/images/icons/icon-192.png",
-    shortcut: "/images/icons/icon-192.png",
-    apple: "/images/icons/icon-192.png",
+    icon: "/favicon.png",
+    shortcut: "/favicon.png",
+    apple: "/favicon.png",
   },
   alternates: {
     canonical: "https://www.chirosolutionschicago.com/blog",
+    types: {
+      'application/rss+xml': '/rss.xml',
+    },
   },
 };
 

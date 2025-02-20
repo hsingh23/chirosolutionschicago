@@ -24,8 +24,9 @@ export const metadata: Metadata = {
     maximumScale: 1,
   },
   icons: {
-    icon: '/images/icons/icon-192.png',
-    apple: '/images/icons/icon-192.png',
+    icon: '/favicon.png',
+    apple: '/favicon.png',
+    shortcut: '/favicon.png',
   },
 };
 
