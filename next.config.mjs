@@ -31,62 +31,138 @@ const nextConfig = {
   },
 };
 
-export default withPWA({
+// Configure PWA
+const pwaConfig = {
   dest: 'public',
   register: true,
   skipWaiting: true,
   disable: process.env.NODE_ENV === 'development',
-  // Configure PWA caching for images
   runtimeCaching: [
     {
-      urlPattern: /^https:\/\/(?:images\.unsplash\.com|apm\.info)\/.*/i,
+      urlPattern: /^https:\/\/fonts\.(?:googleapis|gstatic)\.com\/.*/i,
       handler: 'CacheFirst',
       options: {
-        cacheName: 'external-images',
+        cacheName: 'google-fonts',
         expiration: {
-          maxEntries: 50,
-          maxAgeSeconds: 30 * 24 * 60 * 60, // 30 days
+          maxEntries: 20,
+          maxAgeSeconds: 60 * 60 * 24 * 365, // 365 days
         },
       },
     },
     {
-      urlPattern: /\/_next\/image\?url=.+/i,
-      handler: 'CacheFirst',
+      urlPattern: /\.(?:eot|otf|ttc|ttf|woff|woff2|font.css)$/i,
+      handler: 'StaleWhileRevalidate',
       options: {
-        cacheName: 'next-images',
+        cacheName: 'static-font-assets',
         expiration: {
-          maxEntries: 100,
+          maxEntries: 20,
           maxAgeSeconds: 7 * 24 * 60 * 60, // 7 days
         },
       },
     },
     {
-      urlPattern: /\/images\/.+$/i,
-      handler: 'CacheFirst',
+      urlPattern: /\.(?:jpg|jpeg|gif|png|svg|ico|webp)$/i,
+      handler: 'StaleWhileRevalidate',
       options: {
-        cacheName: 'static-images',
+        cacheName: 'static-image-assets',
         expiration: {
-          maxEntries: 100,
-          maxAgeSeconds: 30 * 24 * 60 * 60, // 30 days
-        },
-        cacheableResponse: {
-          statuses: [0, 200],
+          maxEntries: 64,
+          maxAgeSeconds: 24 * 60 * 60, // 24 hours
         },
       },
     },
     {
-      urlPattern: /\.(png|jpg|jpeg|svg|gif|webp)$/i,
-      handler: 'CacheFirst',
+      urlPattern: /\.(?:js)$/i,
+      handler: 'StaleWhileRevalidate',
       options: {
-        cacheName: 'other-images',
+        cacheName: 'static-js-assets',
         expiration: {
-          maxEntries: 50,
-          maxAgeSeconds: 30 * 24 * 60 * 60, // 30 days
-        },
-        cacheableResponse: {
-          statuses: [0, 200],
+          maxEntries: 32,
+          maxAgeSeconds: 24 * 60 * 60, // 24 hours
         },
       },
-    }
+    },
+    {
+      urlPattern: /\.(?:css|less)$/i,
+      handler: 'StaleWhileRevalidate',
+      options: {
+        cacheName: 'static-style-assets',
+        expiration: {
+          maxEntries: 32,
+          maxAgeSeconds: 24 * 60 * 60, // 24 hours
+        },
+      },
+    },
+    {
+      urlPattern: /\/_next\/data\/.+\/.+\.json$/i,
+      handler: 'StaleWhileRevalidate',
+      options: {
+        cacheName: 'next-data',
+        expiration: {
+          maxEntries: 32,
+          maxAgeSeconds: 24 * 60 * 60, // 24 hours
+        },
+      },
+    },
+    {
+      urlPattern: /\.(?:json|xml|csv)$/i,
+      handler: 'NetworkFirst',
+      options: {
+        cacheName: 'static-data-assets',
+        expiration: {
+          maxEntries: 32,
+          maxAgeSeconds: 24 * 60 * 60, // 24 hours
+        },
+      },
+    },
+    {
+      urlPattern: ({ url }) => {
+        const isSameOrigin = self.origin === url.origin;
+        return isSameOrigin && url.pathname.startsWith('/api/');
+      },
+      handler: 'NetworkFirst',
+      method: 'GET',
+      options: {
+        cacheName: 'apis',
+        expiration: {
+          maxEntries: 16,
+          maxAgeSeconds: 24 * 60 * 60, // 24 hours
+        },
+        networkTimeoutSeconds: 10,
+      },
+    },
+    {
+      urlPattern: ({ url }) => {
+        const isSameOrigin = self.origin === url.origin;
+        return isSameOrigin && !url.pathname.startsWith('/api/');
+      },
+      handler: 'NetworkFirst',
+      options: {
+        cacheName: 'others',
+        expiration: {
+          maxEntries: 32,
+          maxAgeSeconds: 24 * 60 * 60, // 24 hours
+        },
+        networkTimeoutSeconds: 10,
+      },
+    },
+    {
+      urlPattern: ({ url }) => {
+        const isSameOrigin = self.origin === url.origin;
+        return !isSameOrigin;
+      },
+      handler: 'NetworkFirst',
+      options: {
+        cacheName: 'cross-origin',
+        expiration: {
+          maxEntries: 32,
+          maxAgeSeconds: 60 * 60, // 1 hour
+        },
+        networkTimeoutSeconds: 10,
+      },
+    },
   ],
-})(nextConfig);
+};
+
+// export default withPWA(pwaConfig)(nextConfig);
+export default nextConfig;

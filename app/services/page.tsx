@@ -1,6 +1,5 @@
 "use client";
-
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { motion } from "motion/react";
 import Link from "next/link";
 import Image from "next/image";
@@ -358,11 +357,21 @@ const services = [
   },
 ];
 
+// Main component that doesn't use useSearchParams directly
 export default function Services() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <ServicesContent />
+    </Suspense>
+  );
+}
+
+// Inner component that safely uses useSearchParams inside the Suspense boundary
+function ServicesContent() {
   const [activeService, setActiveService] = useState(services[0]);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const searchParams = useSearchParams();
-
+  
   useEffect(() => {
     const serviceId = searchParams.get("service");
     if (serviceId) {
@@ -372,19 +381,18 @@ export default function Services() {
       }
     }
   }, [searchParams]);
-
+  
   const handleServiceClick = (service: (typeof services)[0]) => {
     setActiveService(service);
     setIsMobileMenuOpen(false);
     window.history.pushState({}, "", `?service=${service.id}`);
   };
-
+  
   return (
     <div className="min-h-screen py-12 pt-24">
       <div className="container mx-auto px-4">
         <h1 className="text-4xl font-bold mb-8 text-center">Our Services</h1>
         <p className="text-xl text-center mb-12 text-gray-600">Experience our comprehensive range of luxury chiropractic and holistic wellness services.</p>
-
         <div className="flex flex-col md:flex-row gap-8">
           {/* Mobile Menu Button */}
           <div className="md:hidden mb-4 sticky top-0 z-10 bg-white p-4 shadow-md">
@@ -400,7 +408,6 @@ export default function Services() {
               {isMobileMenuOpen ? "Close Menu" : "View All Services"}
             </button>
           </div>
-
           {/* Left Sidebar */}
           <div className={`md:w-1/4 ${isMobileMenuOpen ? "block" : "hidden md:block"}`}>
             <nav className="sticky top-24">
@@ -418,7 +425,6 @@ export default function Services() {
               </ul>
             </nav>
           </div>
-
           {/* Main Content */}
           <div className="md:w-3/4">
             <motion.div
@@ -441,6 +447,8 @@ export default function Services() {
                   {activeService.name}
                 </h2>
                 <p className="text-gray-600 mb-6">{activeService.longDescription}</p>
+                
+                {/* Rest of the UI */}
                 <h3 className="text-xl font-semibold mb-2">Benefits:</h3>
                 <ul className="list-disc list-inside mb-6">
                   {activeService.benefits.map((benefit, index) => (

@@ -1,0 +1,1565 @@
+Upgrading from 13 to 14
+To update to Next.js version 14, run the following command using your preferred package manager:
+
+Terminal
+
+npm i next@next-14 react@18 react-dom@18 && npm i eslint-config-next@next-14 -D
+Terminal
+
+yarn add next@next-14 react@18 react-dom@18 && yarn add eslint-config-next@next-14 -D
+Terminal
+
+pnpm i next@next-14 react@18 react-dom@18 && pnpm i eslint-config-next@next-14 -D
+Terminal
+
+bun add next@next-14 react@18 react-dom@18 && bun add eslint-config-next@next-14 -D
+Good to know: If you are using TypeScript, ensure you also upgrade @types/react and @types/react-dom to their latest versions.
+
+v14 Summary
+The minimum Node.js version has been bumped from 16.14 to 18.17, since 16.x has reached end-of-life.
+The next export command has been removed in favor of output: 'export' config. Please see the docs for more information.
+The next/server import for ImageResponse was renamed to next/og. A codemod is available to safely and automatically rename your imports.
+The @next/font package has been fully removed in favor of the built-in next/font. A codemod is available to safely and automatically rename your imports.
+The WASM target for next-swc has been removed.
+
+
+
+15.0
+Transform App Router Route Segment Config runtime value from experimental-edge to edge
+app-dir-runtime-config-experimental-edge
+Note: This codemod is App Router specific.
+
+Terminal
+
+npx @next/codemod@latest app-dir-runtime-config-experimental-edge .
+This codemod transforms Route Segment Config runtime value experimental-edge to edge.
+
+For example:
+
+
+export const runtime = 'experimental-edge'
+Transforms into:
+
+
+export const runtime = 'edge'
+Migrate to async Dynamic APIs
+APIs that opted into dynamic rendering that previously supported synchronous access are now asynchronous. You can read more about this breaking change in the upgrade guide.
+
+next-async-request-api
+Terminal
+
+npx @next/codemod@latest next-async-request-api .
+This codemod will transform dynamic APIs (cookies(), headers() and draftMode() from next/headers) that are now asynchronous to be properly awaited or wrapped with React.use() if applicable. When an automatic migration isn't possible, the codemod will either add a typecast (if a TypeScript file) or a comment to inform the user that it needs to be manually reviewed & updated.
+
+For example:
+
+
+import { cookies, headers } from 'next/headers'
+const token = cookies().get('token')
+ 
+function useToken() {
+  const token = cookies().get('token')
+  return token
+}
+ 
+export default function Page() {
+  const name = cookies().get('name')
+}
+ 
+function getHeader() {
+  return headers().get('x-foo')
+}
+Transforms into:
+
+
+import { use } from 'react'
+import {
+  cookies,
+  headers,
+  type UnsafeUnwrappedCookies,
+  type UnsafeUnwrappedHeaders,
+} from 'next/headers'
+const token = (cookies() as unknown as UnsafeUnwrappedCookies).get('token')
+ 
+function useToken() {
+  const token = use(cookies()).get('token')
+  return token
+}
+ 
+export default async function Page() {
+  const name = (await cookies()).get('name')
+}
+ 
+function getHeader() {
+  return (headers() as unknown as UnsafeUnwrappedHeaders).get('x-foo')
+}
+When we detect property access on the params or searchParams props in the page / route entries (page.js, layout.js, route.js, or default.js) or the generateMetadata / generateViewport APIs, it will attempt to transform the callsite from a sync to an async function, and await the property access. If it can't be made async (such as with a client component), it will use React.use to unwrap the promise .
+
+For example:
+
+
+// page.tsx
+export default function Page({
+  params,
+  searchParams,
+}: {
+  params: { slug: string }
+  searchParams: { [key: string]: string | string[] | undefined }
+}) {
+  const { value } = searchParams
+  if (value === 'foo') {
+    // ...
+  }
+}
+ 
+export function generateMetadata({ params }: { params: { slug: string } }) {
+  const { slug } = params
+  return {
+    title: `My Page - ${slug}`,
+  }
+}
+Transforms into:
+
+
+// page.tsx
+export default async function Page(props: {
+  params: Promise<{ slug: string }>
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>
+}) {
+  const searchParams = await props.searchParams
+  const { value } = searchParams
+  if (value === 'foo') {
+    // ...
+  }
+}
+ 
+export async function generateMetadata(props: {
+  params: Promise<{ slug: string }>
+}) {
+  const params = await props.params
+  const { slug } = params
+  return {
+    title: `My Page - ${slug}`,
+  }
+}
+Good to know: When this codemod identifies a spot that might require manual intervention, but we aren't able to determine the exact fix, it will add a comment or typecast to the code to inform the user that it needs to be manually updated. These comments are prefixed with @next/codemod, and typecasts are prefixed with UnsafeUnwrapped. Your build will error until these comments are explicitly removed. Read more.
+
+Replace geo and ip properties of NextRequest with @vercel/functions
+next-request-geo-ip
+Terminal
+
+npx @next/codemod@latest next-request-geo-ip .
+This codemod installs @vercel/functions and transforms geo and ip properties of NextRequest with corresponding @vercel/functions features.
+
+For example:
+
+
+import type { NextRequest } from 'next/server'
+ 
+export function GET(req: NextRequest) {
+  const { geo, ip } = req
+}
+Transforms into:
+
+
+import type { NextRequest } from 'next/server'
+import { geolocation, ipAddress } from '@vercel/functions'
+ 
+export function GET(req: NextRequest) {
+  const geo = geolocation(req)
+  const ip = ipAddress(req)
+}
+14.0
+Migrate ImageResponse imports
+next-og-import
+Terminal
+
+npx @next/codemod@latest next-og-import .
+This codemod moves transforms imports from next/server to next/og for usage of Dynamic OG Image Generation.
+
+For example:
+
+
+import { ImageResponse } from 'next/server'
+Transforms into:
+
+
+import { ImageResponse } from 'next/og'
+Use viewport export
+metadata-to-viewport-export
+Terminal
+
+npx @next/codemod@latest metadata-to-viewport-export .
+This codemod migrates certain viewport metadata to viewport export.
+
+For example:
+
+
+export const metadata = {
+  title: 'My App',
+  themeColor: 'dark',
+  viewport: {
+    width: 1,
+  },
+}
+Transforms into:
+
+
+export const metadata = {
+  title: 'My App',
+}
+ 
+export const viewport = {
+  width: 1,
+  themeColor: 'dark',
+}
+
+
+
+
+reactCompiler
+This feature is currently experimental and subject to change, it's not recommended for production. Try it out and share your feedback on GitHub.
+Next.js 15 introduced support for the React Compiler. The compiler improves performance by automatically optimizing component rendering. This reduces the amount of manual memoization developers have to do through APIs such as useMemo and useCallback.
+
+To use it, upgrade to Next.js 15, install the babel-plugin-react-compiler:
+
+Terminal
+
+npm install babel-plugin-react-compiler
+Then, add experimental.reactCompiler option in next.config.js:
+
+next.config.ts
+TypeScript
+
+TypeScript
+
+import type { NextConfig } from 'next'
+ 
+const nextConfig: NextConfig = {
+  experimental: {
+    reactCompiler: true,
+  },
+}
+ 
+export default nextConfig
+Note: The React Compiler is currently only possible to use in Next.js through a Babel plugin. This will opt-out of Next.js's default Rust-based compiler, which could result in slower build times. We are working on support for the React Compiler as our default compiler.
+
+Annotations
+You can configure the compiler to run in "opt-in" mode as follows:
+
+next.config.ts
+TypeScript
+
+TypeScript
+
+import type { NextConfig } from 'next'
+ 
+const nextConfig: NextConfig = {
+  experimental: {
+    reactCompiler: {
+      compilationMode: 'annotation',
+    },
+  },
+}
+ 
+export default nextConfig
+Then, you can annotate specific components or hooks with the "use memo" directive from React to opt-in:
+
+app/page.tsx
+TypeScript
+
+TypeScript
+
+export default function Page() {
+  'use memo'
+  // ...
+}
+Note: You can also use the "use no memo" directive from React for the opposite effect, to opt-out a component or hook.
+
+---
+
+Version 15
+Upgrading from 14 to 15
+To update to Next.js version 15, you can use the upgrade codemod:
+
+Terminal
+
+npx @next/codemod@canary upgrade latest
+If you prefer to do it manually, ensure that you're installing the latest Next & React versions:
+
+Terminal
+
+npm i next@latest react@latest react-dom@latest eslint-config-next@latest
+Good to know:
+
+If you see a peer dependencies warning, you may need to update react and react-dom to the suggested versions, or you use the --force or --legacy-peer-deps flag to ignore the warning. This won't be necessary once both Next.js 15 and React 19 are stable.
+React 19
+The minimum versions of react and react-dom is now 19.
+useFormState has been replaced by useActionState. The useFormState hook is still available in React 19, but it is deprecated and will be removed in a future release. useActionState is recommended and includes additional properties like reading the pending state directly. Learn more.
+useFormStatus now includes additional keys like data, method, and action. If you are not using React 19, only the pending key is available. Learn more.
+Read more in the React 19 upgrade guide.
+Good to know: If you are using TypeScript, ensure you also upgrade @types/react and @types/react-dom to their latest versions.
+
+Async Request APIs (Breaking change)
+Previously synchronous Dynamic APIs that rely on runtime information are now asynchronous:
+
+cookies
+headers
+draftMode
+params in layout.js, page.js, route.js, default.js, opengraph-image, twitter-image, icon, and apple-icon.
+searchParams in page.js
+To ease the burden of migration, a codemod is available to automate the process and the APIs can temporarily be accessed synchronously.
+
+cookies
+Recommended Async Usage
+
+import { cookies } from 'next/headers'
+ 
+// Before
+const cookieStore = cookies()
+const token = cookieStore.get('token')
+ 
+// After
+const cookieStore = await cookies()
+const token = cookieStore.get('token')
+Temporary Synchronous Usage
+app/page.tsx
+TypeScript
+
+TypeScript
+
+import { cookies, type UnsafeUnwrappedCookies } from 'next/headers'
+ 
+// Before
+const cookieStore = cookies()
+const token = cookieStore.get('token')
+ 
+// After
+const cookieStore = cookies() as unknown as UnsafeUnwrappedCookies
+// will log a warning in dev
+const token = cookieStore.get('token')
+headers
+Recommended Async Usage
+
+import { headers } from 'next/headers'
+ 
+// Before
+const headersList = headers()
+const userAgent = headersList.get('user-agent')
+ 
+// After
+const headersList = await headers()
+const userAgent = headersList.get('user-agent')
+Temporary Synchronous Usage
+app/page.tsx
+TypeScript
+
+TypeScript
+
+import { headers, type UnsafeUnwrappedHeaders } from 'next/headers'
+ 
+// Before
+const headersList = headers()
+const userAgent = headersList.get('user-agent')
+ 
+// After
+const headersList = headers() as unknown as UnsafeUnwrappedHeaders
+// will log a warning in dev
+const userAgent = headersList.get('user-agent')
+draftMode
+Recommended Async Usage
+
+import { draftMode } from 'next/headers'
+ 
+// Before
+const { isEnabled } = draftMode()
+ 
+// After
+const { isEnabled } = await draftMode()
+Temporary Synchronous Usage
+app/page.tsx
+TypeScript
+
+TypeScript
+
+import { draftMode, type UnsafeUnwrappedDraftMode } from 'next/headers'
+ 
+// Before
+const { isEnabled } = draftMode()
+ 
+// After
+// will log a warning in dev
+const { isEnabled } = draftMode() as unknown as UnsafeUnwrappedDraftMode
+params & searchParams
+Asynchronous Layout
+app/layout.tsx
+TypeScript
+
+TypeScript
+
+// Before
+type Params = { slug: string }
+ 
+export function generateMetadata({ params }: { params: Params }) {
+  const { slug } = params
+}
+ 
+export default async function Layout({
+  children,
+  params,
+}: {
+  children: React.ReactNode
+  params: Params
+}) {
+  const { slug } = params
+}
+ 
+// After
+type Params = Promise<{ slug: string }>
+ 
+export async function generateMetadata({ params }: { params: Params }) {
+  const { slug } = await params
+}
+ 
+export default async function Layout({
+  children,
+  params,
+}: {
+  children: React.ReactNode
+  params: Params
+}) {
+  const { slug } = await params
+}
+Synchronous Layout
+app/layout.tsx
+TypeScript
+
+TypeScript
+
+// Before
+type Params = { slug: string }
+ 
+export default function Layout({
+  children,
+  params,
+}: {
+  children: React.ReactNode
+  params: Params
+}) {
+  const { slug } = params
+}
+ 
+// After
+import { use } from 'react'
+ 
+type Params = Promise<{ slug: string }>
+ 
+export default function Layout(props: {
+  children: React.ReactNode
+  params: Params
+}) {
+  const params = use(props.params)
+  const slug = params.slug
+}
+Asynchronous Page
+app/page.tsx
+TypeScript
+
+TypeScript
+
+// Before
+type Params = { slug: string }
+type SearchParams = { [key: string]: string | string[] | undefined }
+ 
+export function generateMetadata({
+  params,
+  searchParams,
+}: {
+  params: Params
+  searchParams: SearchParams
+}) {
+  const { slug } = params
+  const { query } = searchParams
+}
+ 
+export default async function Page({
+  params,
+  searchParams,
+}: {
+  params: Params
+  searchParams: SearchParams
+}) {
+  const { slug } = params
+  const { query } = searchParams
+}
+ 
+// After
+type Params = Promise<{ slug: string }>
+type SearchParams = Promise<{ [key: string]: string | string[] | undefined }>
+ 
+export async function generateMetadata(props: {
+  params: Params
+  searchParams: SearchParams
+}) {
+  const params = await props.params
+  const searchParams = await props.searchParams
+  const slug = params.slug
+  const query = searchParams.query
+}
+ 
+export default async function Page(props: {
+  params: Params
+  searchParams: SearchParams
+}) {
+  const params = await props.params
+  const searchParams = await props.searchParams
+  const slug = params.slug
+  const query = searchParams.query
+}
+Synchronous Page
+
+'use client'
+ 
+// Before
+type Params = { slug: string }
+type SearchParams = { [key: string]: string | string[] | undefined }
+ 
+export default function Page({
+  params,
+  searchParams,
+}: {
+  params: Params
+  searchParams: SearchParams
+}) {
+  const { slug } = params
+  const { query } = searchParams
+}
+ 
+// After
+import { use } from 'react'
+ 
+type Params = Promise<{ slug: string }>
+type SearchParams = Promise<{ [key: string]: string | string[] | undefined }>
+ 
+export default function Page(props: {
+  params: Params
+  searchParams: SearchParams
+}) {
+  const params = use(props.params)
+  const searchParams = use(props.searchParams)
+  const slug = params.slug
+  const query = searchParams.query
+}
+
+// Before
+export default function Page({ params, searchParams }) {
+  const { slug } = params
+  const { query } = searchParams
+}
+ 
+// After
+import { use } from "react"
+ 
+export default function Page(props) {
+  const params = use(props.params)
+  const searchParams = use(props.searchParams)
+  const slug = params.slug
+  const query = searchParams.query
+}
+ 
+Route Handlers
+app/api/route.ts
+
+// Before
+type Params = { slug: string }
+ 
+export async function GET(request: Request, segmentData: { params: Params }) {
+  const params = segmentData.params
+  const slug = params.slug
+}
+ 
+// After
+type Params = Promise<{ slug: string }>
+ 
+export async function GET(request: Request, segmentData: { params: Params }) {
+  const params = await segmentData.params
+  const slug = params.slug
+}
+app/api/route.js
+
+// Before
+export async function GET(request, segmentData) {
+  const params = segmentData.params
+  const slug = params.slug
+}
+ 
+// After
+export async function GET(request, segmentData) {
+  const params = await segmentData.params
+  const slug = params.slug
+}
+runtime configuration (Breaking change)
+The runtime segment configuration previously supported a value of experimental-edge in addition to edge. Both configurations refer to the same thing, and to simplify the options, we will now error if experimental-edge is used. To fix this, update your runtime configuration to edge. A codemod is available to automatically do this.
+
+fetch requests
+fetch requests are no longer cached by default.
+
+To opt specific fetch requests into caching, you can pass the cache: 'force-cache' option.
+
+app/layout.js
+
+export default async function RootLayout() {
+  const a = await fetch('https://...') // Not Cached
+  const b = await fetch('https://...', { cache: 'force-cache' }) // Cached
+ 
+  // ...
+}
+To opt all fetch requests in a layout or page into caching, you can use the export const fetchCache = 'default-cache' segment config option. If individual fetch requests specify a cache option, that will be used instead.
+
+app/layout.js
+
+// Since this is the root layout, all fetch requests in the app
+// that don't set their own cache option will be cached.
+export const fetchCache = 'default-cache'
+ 
+export default async function RootLayout() {
+  const a = await fetch('https://...') // Cached
+  const b = await fetch('https://...', { cache: 'no-store' }) // Not cached
+ 
+  // ...
+}
+Route Handlers
+GET functions in Route Handlers are no longer cached by default. To opt GET methods into caching, you can use a route config option such as export const dynamic = 'force-static' in your Route Handler file.
+
+app/api/route.js
+
+export const dynamic = 'force-static'
+ 
+export async function GET() {}
+Client-side Router Cache
+When navigating between pages via <Link> or useRouter, page segments are no longer reused from the client-side router cache. However, they are still reused during browser backward and forward navigation and for shared layouts.
+
+To opt page segments into caching, you can use the staleTimes config option:
+
+next.config.js
+
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  experimental: {
+    staleTimes: {
+      dynamic: 30,
+      static: 180,
+    },
+  },
+}
+ 
+module.exports = nextConfig
+Layouts and loading states are still cached and reused on navigation.
+
+next/font
+The @next/font package has been removed in favor of the built-in next/font. A codemod is available to safely and automatically rename your imports.
+
+app/layout.js
+
+// Before
+import { Inter } from '@next/font/google'
+ 
+// After
+import { Inter } from 'next/font/google'
+bundlePagesRouterDependencies
+experimental.bundlePagesExternals is now stable and renamed to bundlePagesRouterDependencies.
+
+next.config.js
+
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  // Before
+  experimental: {
+    bundlePagesExternals: true,
+  },
+ 
+  // After
+  bundlePagesRouterDependencies: true,
+}
+ 
+module.exports = nextConfig
+serverExternalPackages
+experimental.serverComponentsExternalPackages is now stable and renamed to serverExternalPackages.
+
+next.config.js
+
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  // Before
+  experimental: {
+    serverComponentsExternalPackages: ['package-name'],
+  },
+ 
+  // After
+  serverExternalPackages: ['package-name'],
+}
+ 
+module.exports = nextConfig
+Speed Insights
+Auto instrumentation for Speed Insights was removed in Next.js 15.
+
+To continue using Speed Insights, follow the Vercel Speed Insights Quickstart guide.
+
+NextRequest Geolocation
+The geo and ip properties on NextRequest have been removed as these values are provided by your hosting provider. A codemod is available to automate this migration.
+
+If you are using Vercel, you can alternatively use the geolocation and ipAddress functions from @vercel/functions instead:
+
+middleware.ts
+
+import { geolocation } from '@vercel/functions'
+import type { NextRequest } from 'next/server'
+ 
+export function middleware(request: NextRequest) {
+  const { city } = geolocation(request)
+ 
+  // ...
+}
+middleware.ts
+
+import { ipAddress } from '@vercel/functions'
+import type { NextRequest } from 'next/server'
+ 
+export function middleware(request: NextRequest) {
+  const ip = ipAddress(request)
+ 
+  // ...
+}
+
+
+
+turbo
+This feature is currently experimental and subject to change, it's not recommended for production. Try it out and share your feedback on GitHub.
+The turbo option lets you customize Turbopack to transform different files and change how modules are resolved.
+
+next.config.ts
+TypeScript
+
+TypeScript
+
+import type { NextConfig } from 'next'
+ 
+const nextConfig: NextConfig = {
+  experimental: {
+    turbo: {
+      // ...
+    },
+  },
+}
+ 
+export default nextConfig
+Good to know:
+
+Turbopack for Next.js does not require loaders nor loader configuration for built-in functionality. Turbopack has built-in support for CSS and compiling modern JavaScript, so there's no need for css-loader, postcss-loader, or babel-loader if you're using @babel/preset-env.
+Reference
+Options
+The following options are available for the turbo configuration:
+
+Option	Description
+rules	List of supported webpack loaders to apply when running with Turbopack.
+resolveAlias	Map aliased imports to modules to load in their place.
+resolveExtensions	List of extensions to resolve when importing files.
+moduleIdStrategy	Assign module IDs
+treeShaking	Enable tree shaking for the turbopack dev server and build.
+memoryLimit	A target memory limit for turbo, in bytes.
+Supported loaders
+The following loaders have been tested to work with Turbopack's webpack loader implementation:
+
+babel-loader
+@svgr/webpack
+svg-inline-loader
+yaml-loader
+string-replace-loader
+raw-loader
+sass-loader
+Examples
+Configuring webpack loaders
+If you need loader support beyond what's built in, many webpack loaders already work with Turbopack. There are currently some limitations:
+
+Only a core subset of the webpack loader API is implemented. Currently, there is enough coverage for some popular loaders, and we'll expand our API support in the future.
+Only loaders that return JavaScript code are supported. Loaders that transform files like stylesheets or images are not currently supported.
+Options passed to webpack loaders must be plain JavaScript primitives, objects, and arrays. For example, it's not possible to pass require() plugin modules as option values.
+To configure loaders, add the names of the loaders you've installed and any options in next.config.js, mapping file extensions to a list of loaders:
+
+next.config.js
+
+module.exports = {
+  experimental: {
+    turbo: {
+      rules: {
+        '*.svg': {
+          loaders: ['@svgr/webpack'],
+          as: '*.js',
+        },
+      },
+    },
+  },
+}
+Good to know: Prior to Next.js version 13.4.4, turbo.rules was named turbo.loaders and only accepted file extensions like .mdx instead of *.mdx.
+
+Resolving aliases
+Turbopack can be configured to modify module resolution through aliases, similar to webpack's resolve.alias configuration.
+
+To configure resolve aliases, map imported patterns to their new destination in next.config.js:
+
+next.config.js
+
+module.exports = {
+  experimental: {
+    turbo: {
+      resolveAlias: {
+        underscore: 'lodash',
+        mocha: { browser: 'mocha/browser-entry.js' },
+      },
+    },
+  },
+}
+This aliases imports of the underscore package to the lodash package. In other words, import underscore from 'underscore' will load the lodash module instead of underscore.
+
+Turbopack also supports conditional aliasing through this field, similar to Node.js' conditional exports. At the moment only the browser condition is supported. In the case above, imports of the mocha module will be aliased to mocha/browser-entry.js when Turbopack targets browser environments.
+
+Resolving custom extensions
+Turbopack can be configured to resolve modules with custom extensions, similar to webpack's resolve.extensions configuration.
+
+To configure resolve extensions, use the resolveExtensions field in next.config.js:
+
+next.config.js
+
+module.exports = {
+  experimental: {
+    turbo: {
+      resolveExtensions: [
+        '.mdx',
+        '.tsx',
+        '.ts',
+        '.jsx',
+        '.js',
+        '.mjs',
+        '.json',
+      ],
+    },
+  },
+}
+This overwrites the original resolve extensions with the provided list. Make sure to include the default extensions.
+
+For more information and guidance for how to migrate your app to Turbopack from webpack, see Turbopack's documentation on webpack compatibility.
+
+Assigning module IDs
+Turbopack currently supports two strategies for assigning module IDs:
+
+'named' assigns readable module IDs based on the module's path and functionality.
+'deterministic' assigns small hashed numeric module IDs, which are mostly consistent between builds and therefore help with long-term caching.
+If not set, Turbopack will use 'named' for development builds and 'deterministic' for production builds.
+
+To configure the module IDs strategy, use the moduleIdStrategy field in next.config.js:
+
+next.config.js
+
+module.exports = {
+  experimental: {
+    turbo: {
+      moduleIdStrategy: 'deterministic',
+    },
+  },
+}
+
+PWA react 15
+
+
+Progressive Web Applications (PWA)
+Progressive Web Applications (PWAs) offer the reach and accessibility of web applications combined with the features and user experience of native mobile apps. With Next.js, you can create PWAs that provide a seamless, app-like experience across all platforms without the need for multiple codebases or app store approvals.
+
+PWAs allow you to:
+
+Deploy updates instantly without waiting for app store approval
+Create cross-platform applications with a single codebase
+Provide native-like features such as home screen installation and push notifications
+Creating a PWA with Next.js
+1. Creating the Web App Manifest
+Next.js provides built-in support for creating a web app manifest using the App Router. You can create either a static or dynamic manifest file:
+
+For example, create a app/manifest.ts or app/manifest.json file:
+
+app/manifest.ts
+TypeScript
+
+TypeScript
+
+import type { MetadataRoute } from 'next'
+ 
+export default function manifest(): MetadataRoute.Manifest {
+  return {
+    name: 'Next.js PWA',
+    short_name: 'NextPWA',
+    description: 'A Progressive Web App built with Next.js',
+    start_url: '/',
+    display: 'standalone',
+    background_color: '#bccd30',
+    theme_color: '#000000',
+    icons: [
+      {
+        src: '/icon-192x192.png',
+        sizes: '192x192',
+        type: 'image/png',
+      },
+      {
+        src: '/icon-512x512.png',
+        sizes: '512x512',
+        type: 'image/png',
+      },
+    ],
+  }
+}
+This file should contain information about the name, icons, and how it should be displayed as an icon on the user's device. This will allow users to install your PWA on their home screen, providing a native app-like experience.
+
+You can use tools like favicon generators to create the different icon sets and place the generated files in your public/ folder.
+
+2. Implementing Web Push Notifications
+Web Push Notifications are supported with all modern browsers, including:
+
+iOS 16.4+ for applications installed to the home screen
+Safari 16 for macOS 13 or later
+Chromium based browsers
+Firefox
+This makes PWAs a viable alternative to native apps. Notably, you can trigger install prompts without needing offline support.
+
+Web Push Notifications allow you to re-engage users even when they're not actively using your app. Here's how to implement them in a Next.js application:
+
+First, let's create the main page component in app/page.tsx. We'll break it down into smaller parts for better understanding. First, we’ll add some of the imports and utilities we’ll need. It’s okay that the referenced Server Actions do not yet exist:
+
+
+'use client'
+ 
+import { useState, useEffect } from 'react'
+import { subscribeUser, unsubscribeUser, sendNotification } from './actions'
+ 
+function urlBase64ToUint8Array(base64String: string) {
+  const padding = '='.repeat((4 - (base64String.length % 4)) % 4)
+  const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/')
+ 
+  const rawData = window.atob(base64)
+  const outputArray = new Uint8Array(rawData.length)
+ 
+  for (let i = 0; i < rawData.length; ++i) {
+    outputArray[i] = rawData.charCodeAt(i)
+  }
+  return outputArray
+}
+Let’s now add a component to manage subscribing, unsubscribing, and sending push notifications.
+
+
+function PushNotificationManager() {
+  const [isSupported, setIsSupported] = useState(false)
+  const [subscription, setSubscription] = useState<PushSubscription | null>(
+    null
+  )
+  const [message, setMessage] = useState('')
+ 
+  useEffect(() => {
+    if ('serviceWorker' in navigator && 'PushManager' in window) {
+      setIsSupported(true)
+      registerServiceWorker()
+    }
+  }, [])
+ 
+  async function registerServiceWorker() {
+    const registration = await navigator.serviceWorker.register('/sw.js', {
+      scope: '/',
+      updateViaCache: 'none',
+    })
+    const sub = await registration.pushManager.getSubscription()
+    setSubscription(sub)
+  }
+ 
+  async function subscribeToPush() {
+    const registration = await navigator.serviceWorker.ready
+    const sub = await registration.pushManager.subscribe({
+      userVisibleOnly: true,
+      applicationServerKey: urlBase64ToUint8Array(
+        process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!
+      ),
+    })
+    setSubscription(sub)
+    const serializedSub = JSON.parse(JSON.stringify(sub))
+    await subscribeUser(serializedSub)
+  }
+ 
+  async function unsubscribeFromPush() {
+    await subscription?.unsubscribe()
+    setSubscription(null)
+    await unsubscribeUser()
+  }
+ 
+  async function sendTestNotification() {
+    if (subscription) {
+      await sendNotification(message)
+      setMessage('')
+    }
+  }
+ 
+  if (!isSupported) {
+    return <p>Push notifications are not supported in this browser.</p>
+  }
+ 
+  return (
+    <div>
+      <h3>Push Notifications</h3>
+      {subscription ? (
+        <>
+          <p>You are subscribed to push notifications.</p>
+          <button onClick={unsubscribeFromPush}>Unsubscribe</button>
+          <input
+            type="text"
+            placeholder="Enter notification message"
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+          />
+          <button onClick={sendTestNotification}>Send Test</button>
+        </>
+      ) : (
+        <>
+          <p>You are not subscribed to push notifications.</p>
+          <button onClick={subscribeToPush}>Subscribe</button>
+        </>
+      )}
+    </div>
+  )
+}
+Finally, let’s create a component to show a message for iOS devices to instruct them to install to their home screen, and only show this if the app is not already installed.
+
+
+function InstallPrompt() {
+  const [isIOS, setIsIOS] = useState(false)
+  const [isStandalone, setIsStandalone] = useState(false)
+ 
+  useEffect(() => {
+    setIsIOS(
+      /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream
+    )
+ 
+    setIsStandalone(window.matchMedia('(display-mode: standalone)').matches)
+  }, [])
+ 
+  if (isStandalone) {
+    return null // Don't show install button if already installed
+  }
+ 
+  return (
+    <div>
+      <h3>Install App</h3>
+      <button>Add to Home Screen</button>
+      {isIOS && (
+        <p>
+          To install this app on your iOS device, tap the share button
+          <span role="img" aria-label="share icon">
+            {' '}
+            ⎋{' '}
+          </span>
+          and then "Add to Home Screen"
+          <span role="img" aria-label="plus icon">
+            {' '}
+            ➕{' '}
+          </span>.
+        </p>
+      )}
+    </div>
+  )
+}
+ 
+export default function Page() {
+  return (
+    <div>
+      <PushNotificationManager />
+      <InstallPrompt />
+    </div>
+  )
+}
+Now, let’s create the Server Actions which this file calls.
+
+3. Implementing Server Actions
+Create a new file to contain your actions at app/actions.ts. This file will handle creating subscriptions, deleting subscriptions, and sending notifications.
+
+app/actions.ts
+TypeScript
+
+TypeScript
+
+'use server'
+ 
+import webpush from 'web-push'
+ 
+webpush.setVapidDetails(
+  '<mailto:your-email@example.com>',
+  process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!,
+  process.env.VAPID_PRIVATE_KEY!
+)
+ 
+let subscription: PushSubscription | null = null
+ 
+export async function subscribeUser(sub: PushSubscription) {
+  subscription = sub
+  // In a production environment, you would want to store the subscription in a database
+  // For example: await db.subscriptions.create({ data: sub })
+  return { success: true }
+}
+ 
+export async function unsubscribeUser() {
+  subscription = null
+  // In a production environment, you would want to remove the subscription from the database
+  // For example: await db.subscriptions.delete({ where: { ... } })
+  return { success: true }
+}
+ 
+export async function sendNotification(message: string) {
+  if (!subscription) {
+    throw new Error('No subscription available')
+  }
+ 
+  try {
+    await webpush.sendNotification(
+      subscription,
+      JSON.stringify({
+        title: 'Test Notification',
+        body: message,
+        icon: '/icon.png',
+      })
+    )
+    return { success: true }
+  } catch (error) {
+    console.error('Error sending push notification:', error)
+    return { success: false, error: 'Failed to send notification' }
+  }
+}
+Sending a notification will be handled by our service worker, created in step 5.
+
+In a production environment, you would want to store the subscription in a database for persistence across server restarts and to manage multiple users' subscriptions.
+
+4. Generating VAPID Keys
+To use the Web Push API, you need to generate VAPID keys. The simplest way is to use the web-push CLI directly:
+
+First, install web-push globally:
+
+Terminal
+
+npm install -g web-push
+Generate the VAPID keys by running:
+
+Terminal
+
+web-push generate-vapid-keys
+Copy the output and paste the keys into your .env file:
+
+
+NEXT_PUBLIC_VAPID_PUBLIC_KEY=your_public_key_here
+VAPID_PRIVATE_KEY=your_private_key_here
+5. Creating a Service Worker
+Create a public/sw.js file for your service worker:
+
+public/sw.js
+
+self.addEventListener('push', function (event) {
+  if (event.data) {
+    const data = event.data.json()
+    const options = {
+      body: data.body,
+      icon: data.icon || '/icon.png',
+      badge: '/badge.png',
+      vibrate: [100, 50, 100],
+      data: {
+        dateOfArrival: Date.now(),
+        primaryKey: '2',
+      },
+    }
+    event.waitUntil(self.registration.showNotification(data.title, options))
+  }
+})
+ 
+self.addEventListener('notificationclick', function (event) {
+  console.log('Notification click received.')
+  event.notification.close()
+  event.waitUntil(clients.openWindow('<https://your-website.com>'))
+})
+This service worker supports custom images and notifications. It handles incoming push events and notification clicks.
+
+You can set custom icons for notifications using the icon and badge properties.
+The vibrate pattern can be adjusted to create custom vibration alerts on supported devices.
+Additional data can be attached to the notification using the data property.
+Remember to test your service worker thoroughly to ensure it behaves as expected across different devices and browsers. Also, make sure to update the 'https://your-website.com' link in the notificationclick event listener to the appropriate URL for your application.
+
+6. Adding to Home Screen
+The InstallPrompt component defined in step 2 shows a message for iOS devices to instruct them to install to their home screen.
+
+To ensure your application can be installed to a mobile home screen, you must have:
+
+A valid web app manifest (created in step 1)
+The website served over HTTPS
+Modern browsers will automatically show an installation prompt to users when these criteria are met. You can provide a custom installation button with beforeinstallprompt, however, we do not recommend this as it is not cross browser and platform (does not work on Safari iOS).
+
+7. Testing Locally
+To ensure you can view notifications locally, ensure that:
+
+You are running locally with HTTPS
+Use next dev --experimental-https for testing
+Your browser (Chrome, Safari, Firefox) has notifications enabled
+When prompted locally, accept permissions to use notifications
+Ensure notifications are not disabled globally for the entire browser
+If you are still not seeing notifications, try using another browser to debug
+8. Securing your application
+Security is a crucial aspect of any web application, especially for PWAs. Next.js allows you to configure security headers using the next.config.js file. For example:
+
+next.config.js
+
+module.exports = {
+  async headers() {
+    return [
+      {
+        source: '/(.*)',
+        headers: [
+          {
+            key: 'X-Content-Type-Options',
+            value: 'nosniff',
+          },
+          {
+            key: 'X-Frame-Options',
+            value: 'DENY',
+          },
+          {
+            key: 'Referrer-Policy',
+            value: 'strict-origin-when-cross-origin',
+          },
+        ],
+      },
+      {
+        source: '/sw.js',
+        headers: [
+          {
+            key: 'Content-Type',
+            value: 'application/javascript; charset=utf-8',
+          },
+          {
+            key: 'Cache-Control',
+            value: 'no-cache, no-store, must-revalidate',
+          },
+          {
+            key: 'Content-Security-Policy',
+            value: "default-src 'self'; script-src 'self'",
+          },
+        ],
+      },
+    ]
+  },
+}
+Let’s go over each of these options:
+
+Global Headers (applied to all routes):
+X-Content-Type-Options: nosniff: Prevents MIME type sniffing, reducing the risk of malicious file uploads.
+X-Frame-Options: DENY: Protects against clickjacking attacks by preventing your site from being embedded in iframes.
+Referrer-Policy: strict-origin-when-cross-origin: Controls how much referrer information is included with requests, balancing security and functionality.
+Service Worker Specific Headers:
+Content-Type: application/javascript; charset=utf-8: Ensures the service worker is interpreted correctly as JavaScript.
+Cache-Control: no-cache, no-store, must-revalidate: Prevents caching of the service worker, ensuring users always get the latest version.
+Content-Security-Policy: default-src 'self'; script-src 'self': Implements a strict Content Security Policy for the service worker, only allowing scripts from the same origin.
+Learn more about defining Content Security Policies with Next.js.
+
+Next Steps
+Exploring PWA Capabilities: PWAs can leverage various web APIs to provide advanced functionality. Consider exploring features like background sync, periodic background sync, or the File System Access API to enhance your application. For inspiration and up-to-date information on PWA capabilities, you can refer to resources like What PWA Can Do Today.
+Static Exports: If your application requires not running a server, and instead using a static export of files, you can update the Next.js configuration to enable this change. Learn more in the Next.js Static Export documentation. However, you will need to move from Server Actions to calling an external API, as well as moving your defined headers to your proxy.
+Offline Support: To provide offline functionality, one option is Serwist with Next.js. You can find an example of how to integrate Serwist with Next.js in their documentation. Note: this plugin currently requires webpack configuration.
+Security Considerations: Ensure that your service worker is properly secured. This includes using HTTPS, validating the source of push messages, and implementing proper error handling.
+User Experience: Consider implementing progressive enhancement techniques to ensure your app works well even when certain PWA features are not supported by the user's browser.
+
+
+
+
+
+----
+
+
+Single-Page Applications with Next.js
+Next.js fully supports building Single-Page Applications (SPAs).
+
+This includes fast route transitions with prefetching, client-side data fetching, using browser APIs, integrating with third-party client libraries, creating static routes, and more.
+
+If you have an existing SPA, you can migrate to Next.js without large changes to your code. Next.js then allows you to progressively add server features as needed.
+
+What is a Single-Page Application?
+The definition of a SPA varies. We’ll define a “strict SPA” as:
+
+Client-side rendering (CSR): The app is served by one HTML file (e.g. index.html). Every route, page transition, and data fetch is handled by JavaScript in the browser.
+No full-page reloads: Rather than requesting a new document for each route, client-side JavaScript manipulates the current page’s DOM and fetches data as needed.
+Strict SPAs often require large amounts of JavaScript to load before the page can be interactive. Further, client data waterfalls can be challenging to manage. Building SPAs with Next.js can address these issues.
+
+Why use Next.js for SPAs?
+Next.js can automatically code split your JavaScript bundles, and generate multiple HTML entry points into different routes. This avoids loading unnecessary JavaScript code on the client-side, reducing the bundle size and enabling faster page loads.
+
+The next/link component automatically prefetches routes, giving you the fast page transitions of a strict SPA, but with the advantage of persisting application routing state to the URL for linking and sharing.
+
+Next.js can start as a static site or even a strict SPA where everything is rendered client-side. If your project grows, Next.js allows you to progressively add more server features (e.g. React Server Components, Server Actions, and more) as needed.
+
+Examples
+Let's explore common patterns used to build SPAs and how Next.js solves them.
+
+Using React’s use within a Context Provider
+We recommend fetching data in a parent component (or layout), returning the Promise, and then unwrapping the value in a client component with React’s use hook.
+
+Next.js can start data fetching early on the server. In this example, that’s the root layout — the entry point to your application. The server can immediately begin streaming a response to the client.
+
+By “hoisting” your data fetching to the root layout, Next.js starts the specified requests on the server early before any other components in your application. This eliminates client waterfalls and prevents having multiple roundtrips between client and server. It can also significantly improve performance, as your server is closer (and ideally colocated) to where your database is located.
+
+For example, update your root layout to call the Promise, but do not await it.
+
+app/layout.tsx
+TypeScript
+
+TypeScript
+
+import { UserProvider } from './user-provider'
+import { getUser } from './user' // some server-side function
+ 
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode
+}) {
+  let userPromise = getUser() // do NOT await
+ 
+  return (
+    <html lang="en">
+      <body>
+        <UserProvider userPromise={userPromise}>{children}</UserProvider>
+      </body>
+    </html>
+  )
+}
+While you can defer and pass a single Promise as a prop to a client component, we generally see this pattern paired with a React context provider. This enables easier access from client components with a custom React hook.
+
+You can forward a Promise to the React context provider:
+
+app/user-provider.ts
+TypeScript
+
+TypeScript
+
+'use client';
+ 
+import { createContext, useContext, ReactNode } from 'react';
+ 
+type User = any;
+type UserContextType = {
+  userPromise: Promise<User | null>;
+};
+ 
+const UserContext = createContext<UserContextType | null>(null);
+ 
+export function useUser(): UserContextType {
+  let context = useContext(UserContext);
+  if (context === null) {
+    throw new Error('useUser must be used within a UserProvider');
+  }
+  return context;
+}
+ 
+export function UserProvider({
+  children,
+  userPromise
+}: {
+  children: ReactNode;
+  userPromise: Promise<User | null>;
+}) {
+  return (
+    <UserContext.Provider value={{ userPromise }}>
+      {children}
+    </UserContext.Provider>
+  );
+}
+Finally, you can call the useUser() custom hook in any client component and unwrap the Promise:
+
+app/profile.tsx
+TypeScript
+
+TypeScript
+
+'use client'
+ 
+import { use } from 'react'
+import { useUser } from './user-provider'
+ 
+export function Profile() {
+  const { userPromise } = useUser()
+  const user = use(userPromise)
+ 
+  return '...'
+}
+The component that consumes the Promise (e.g. Profile above) will be suspended. This enables partial hydration. You can see the streamed and prerendered HTML before JavaScript has finished loading.
+
+SPAs with SWR
+SWR is a popular React library for data fetching.
+
+With SWR 2.3.0 (and React 19+), you can gradually adopt server features alongside your existing SWR-based client data fetching code. This is an abstraction of the above use() pattern. This means you can move data fetching between the client and server-side, or use both:
+
+Client-only: useSWR(key, fetcher)
+Server-only: useSWR(key) + RSC-provided data
+Mixed: useSWR(key, fetcher) + RSC-provided data
+For example, wrap your application with <SWRConfig> and a fallback:
+
+app/layout.tsx
+TypeScript
+
+TypeScript
+
+import { SWRConfig } from 'swr'
+import { getUser } from './user' // some server-side function
+ 
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode
+}) {
+  return (
+    <SWRConfig
+      value={{
+        fallback: {
+          // We do NOT await getUser() here
+          // Only components that read this data will suspend
+          '/api/user': getUser(),
+        },
+      }}
+    >
+      {children}
+    </SWRConfig>
+  )
+}
+Because this is a server component, getUser() can securely read cookies, headers, or talk to your database. No separate API route is needed. Client components below the <SWRConfig> can call useSWR() with the same key to retrieve the user data. The component code with useSWR does not require any changes from your existing client-fetching solution.
+
+app/profile.tsx
+TypeScript
+
+TypeScript
+
+'use client'
+ 
+import useSWR from 'swr'
+ 
+export function Profile() {
+  const fetcher = (url) => fetch(url).then((res) => res.json())
+  // The same SWR pattern you already know
+  const { data, error } = useSWR('/api/user', fetcher)
+ 
+  return '...'
+}
+The fallback data can be prerendered and included in the initial HTML response, then immediately read in the child components using useSWR. SWR’s polling, revalidation, and caching still run client-side only, so it preserves all the interactivity you rely on for an SPA.
+
+Since the initial fallback data is automatically handled by Next.js, you can now delete any conditional logic previously needed to check if data was undefined. When the data is loading, the closest <Suspense> boundary will be suspended.
+
+SWR	RSC	RSC + SWR
+SSR data			
+Streaming while SSR			
+Deduplicate requests			
+Client-side features			
+SPAs with React Query
+You can use React Query with Next.js on both the client and server. This enables you to build both strict SPAs, as well as take advantage of server features in Next.js paired with React Query.
+
+Learn more in the React Query documentation.
+
+Rendering components only in the browser
+Client components are prerendered during next build. If you want to disable prerendering for a client component and only load it in the browser environment, you can use next/dynamic:
+
+
+import dynamic from 'next/dynamic'
+ 
+const ClientOnlyComponent = dynamic(() => import('./component'), {
+  ssr: false,
+})
+This can be useful for third-party libraries that rely on browser APIs like window or document. You can also add a useEffect that checks for the existence of these APIs, and if they do not exist, return null or a loading state which would be prerendered.
+
+Shallow routing on the client
+If you are migrating from a strict SPA like Create React App or Vite, you might have existing code which shallow routes to update the URL state. This can be useful for manual transitions between views in your application without using the default Next.js file-system routing.
+
+Next.js allows you to use the native window.history.pushState and window.history.replaceState methods to update the browser's history stack without reloading the page.
+
+pushState and replaceState calls integrate into the Next.js Router, allowing you to sync with usePathname and useSearchParams.
+
+
+'use client'
+ 
+import { useSearchParams } from 'next/navigation'
+ 
+export default function SortProducts() {
+  const searchParams = useSearchParams()
+ 
+  function updateSorting(sortOrder: string) {
+    const urlSearchParams = new URLSearchParams(searchParams.toString())
+    urlSearchParams.set('sort', sortOrder)
+    window.history.pushState(null, '', `?${urlSearchParams.toString()}`)
+  }
+ 
+  return (
+    <>
+      <button onClick={() => updateSorting('asc')}>Sort Ascending</button>
+      <button onClick={() => updateSorting('desc')}>Sort Descending</button>
+    </>
+  )
+}
+Learn more about how routing and navigation work in Next.js.
+
+Using Server Actions in client components
+You can progressively adopt Server Actions while still using client components. This allows you to remove boilerplate code to call an API route, and instead use React features like useActionState to handle loading and error states.
+
+For example, create your first Server Action:
+
+app/actions.ts
+TypeScript
+
+TypeScript
+
+'use server'
+ 
+export async function create() {}
+You can import and use a Server Action from the client, similar to calling a JavaScript function. You do not need to create an API endpoint manually:
+
+app/button.tsx
+TypeScript
+
+TypeScript
+
+'use client'
+ 
+import { create } from './actions'
+ 
+export function Button() {
+  return <button onClick={() => create()}>Create</button>
+}
+Learn more about mutating data with Server Actions.
+
+Static export (optional)
+Next.js also supports generating a fully static site. This has some advantages over strict SPAs:
+
+Automatic code-splitting: Instead of shipping a single index.html, Next.js will generate an HTML file per route, so your visitors get the content faster without waiting for the client JavaScript bundle.
+Improved user experience: Instead of a minimal skeleton for all routes, you get fully rendered pages for each route. When users navigate client side, transitions remain instant and SPA-like.
+To enable a static export, update your configuration:
+
+next.config.ts
+
+import type { NextConfig } from 'next'
+ 
+const nextConfig: NextConfig = {
+  output: 'export',
+}
+ 
+export default nextConfig
+After running next build, Next.js will create an out folder with the HTML/CSS/JS assets for your application.
+
+Note: Next.js server features are not supported with static exports. Learn more.
+
+Migrating existing projects to Next.js
+You can incrementally migrate to Next.js by following our guides:
+
+Migrating from Create React App
+Migrating from Vite
+If you are already using a SPA with the Pages Router, you can learn how to incrementally adopt the App Router.
+
