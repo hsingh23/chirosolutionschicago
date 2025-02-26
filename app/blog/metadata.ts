@@ -18,7 +18,7 @@ async function getLatestPostInfo() {
       tags: tags as string[], 
       totalPosts: posts.length 
     };
-  } catch (error) {
+  } catch {
     return { categories: [], tags: [], totalPosts: 0 };
   }
 }

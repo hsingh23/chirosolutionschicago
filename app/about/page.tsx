@@ -20,7 +20,7 @@ export default function About() {
             />
           </div>
           <div className="md:w-1/2">
-            <h3 className="text-2xl font-semibold mb-4">Dr. Dziekan's Credentials</h3>
+            <h3 className="text-2xl font-semibold mb-4">Dr. Dziekan&apos;s Credentials</h3>
             <ul className="list-disc list-inside mb-6">
               <li>Doctor of Chiropractic</li>
               <li>Certified Chiropractic Sports Physician (CCSP)</li>

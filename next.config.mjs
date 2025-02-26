@@ -21,6 +21,14 @@ const nextConfig = {
       },
     ],
   },
+  experimental: {
+    turbo: {
+      resolveExtensions: ['.tsx', '.ts', '.jsx', '.js', '.json', '.mdx'],
+      moduleIdStrategy: process.env.NODE_ENV === 'development' ? 'named' : 'deterministic',
+      treeShaking: true,
+      memoryLimit: 4000 * 1024 * 1024, // 4GB limit
+    },
+  },
 };
 
 export default withPWA({

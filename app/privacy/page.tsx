@@ -5,7 +5,7 @@ export default function PrivacyPolicy() {
         <h1 className="text-4xl font-bold mb-8">Privacy Policy</h1>
         <div className="prose max-w-none">
           <p>
-            This Privacy Policy describes how Dr. Daniel M. Dziekan, DC, CCSP ("we," "us," or "our") collects, uses, and
+            This Privacy Policy describes how Dr. Daniel M. Dziekan, DC, CCSP (&quot;we,&quot; &quot;us,&quot; or &quot;our&quot;) collects, uses, and
             shares your personal information when you use our services or visit our website.
           </p>
 

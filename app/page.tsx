@@ -3,7 +3,6 @@ import { useRef, useState } from "react";
 import Image from "next/image";
 import { motion, useScroll, useTransform } from "motion/react";
 import { FaChevronRight, FaStar, FaInstagram, FaFacebook, FaChevronLeft } from "react-icons/fa";
-import Link from "next/link";
 
 const stats = [
   { value: "2100+", label: "Satisfied Clients" },

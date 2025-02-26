@@ -31,7 +31,8 @@ interface BlogPostData extends BlogPost {
   readingTime: number;
 }
 
-export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
+export async function generateMetadata(props: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const params = await props.params;
   const post = await getPostData(params.slug);
   if (!post) {
     return {
@@ -47,7 +48,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
     .trim();
 
   const description = post.excerpt || firstParagraph || post.content.substring(0, 160);
-  
+
   const postTitle = `${post.title} - Chiropractic & Wellness Blog | Dr. Daniel M. Dziekan`;
   const categoryMeta = post.category ? `${post.category} - ` : '';
   const tagsMeta = post.tags?.length ? `${post.tags.join(', ')} | ` : '';
@@ -157,12 +158,13 @@ async function getPostData(slug: string): Promise<BlogPostData | null> {
       wordCount,
       readingTime,
     };
-  } catch (error) {
+  } catch {
     return null;
   }
 }
 
-export default async function BlogPost({ params }: { params: { slug: string } }) {
+export default async function BlogPost(props: { params: Promise<{ slug: string }> }) {
+  const params = await props.params;
   const post = await getPostData(params.slug);
 
   if (!post) {

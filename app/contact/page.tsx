@@ -38,7 +38,7 @@ export default function Contact() {
     <div className="min-h-screen py-12 pt-24 ">
       <div className="container mx-auto px-4">
         <h1 className="text-4xl font-bold mb-8 text-center">Contact Us</h1>
-        <p className="text-xl text-center mb-12 text-gray-600">We're here to answer your questions and provide support</p>
+        <p className="text-xl text-center mb-12 text-gray-600">We&apos;re here to answer your questions and provide support</p>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
           <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5 }}>
